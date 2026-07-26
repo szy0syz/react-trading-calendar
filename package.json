@@ -29,6 +29,14 @@
     "preview": "vite preview",
     "prepublishOnly": "pnpm build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/szy0syz/react-trading-calendar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/szy0syz/react-trading-calendar/issues"
+  },
+  "homepage": "https://github.com/szy0syz/react-trading-calendar#readme",
   "keywords": [
     "react",
     "trading",
@@ -38,7 +46,7 @@
     "dashboard",
     "tailwindcss"
   ],
-  "author": "",
+  "author": "szy0syz",
   "license": "MIT",
   "packageManager": "pnpm@11.17.0",
   "engines": {

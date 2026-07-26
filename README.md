@@ -2,6 +2,15 @@
 
 轻量、高性能、开箱即用的纯渲染交易记录日历组件 (React + Tailwind CSS)。支持美股/A股红绿配色切换、明暗黑夜模式、移动端响应式布局。
 
+[![GitHub Repo](https://img.shields.io/badge/GitHub-szy0syz%2Freact--trading--calendar-blue?logo=github)](https://github.com/szy0syz/react-trading-calendar)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
+## 🔗 GitHub 仓库
+
+GitHub 源码仓库：[https://github.com/szy0syz/react-trading-calendar](https://github.com/szy0syz/react-trading-calendar)
+
 ---
 
 ## ✨ 特性
