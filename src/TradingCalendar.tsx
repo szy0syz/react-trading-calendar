@@ -51,7 +51,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
         data-color-scheme={colorScheme}
         style={style}
         className={cn(
-          "tc-calendar-root w-full max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border transition-all duration-300",
+          "tc-calendar-root w-full max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border transition-colors duration-200",
           theme === 'dark'
             ? "bg-[#0b1322] border-slate-800 text-slate-100 dark"
             : "bg-white border-slate-200 text-slate-900",

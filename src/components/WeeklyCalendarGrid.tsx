@@ -29,7 +29,7 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, onD
     <td
       onClick={() => onDateClick?.(day)}
       className={cn(
-        "py-2 sm:py-3 px-0.5 sm:px-1.5 text-center relative transition-all duration-150 rounded-md sm:rounded-lg select-none overflow-hidden",
+        "py-2 sm:py-3 px-0.5 sm:px-1.5 text-center relative transition-colors duration-150 rounded-md sm:rounded-lg select-none overflow-hidden",
         onDateClick && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/40",
         isNonTrading && "bg-diagonal-stripes border border-slate-200 dark:border-slate-800/30"
       )}
@@ -91,9 +91,9 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-          {weekRows.map((row) => (
+          {weekRows.map((row, idx) => (
             <tr
-              key={row.weekNumber}
+              key={`${year}-${month}-week-${row.weekNumber}-${idx}`}
               className="group hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors duration-150"
             >
               <td className="hidden sm:table-cell py-2 sm:py-3 px-0.5 sm:px-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">

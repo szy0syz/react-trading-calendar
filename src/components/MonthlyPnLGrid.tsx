@@ -40,13 +40,13 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
 
           return (
             <div
-              key={m}
+              key={`${year}-m-${m}`}
               onClick={() => onMonthChange?.(year, m)}
               className={cn(
-                "flex flex-col items-center justify-center py-2 px-1 rounded-lg border transition-all duration-200 select-none overflow-hidden",
-                onMonthChange && "cursor-pointer hover:scale-[1.02]",
+                "flex flex-col items-center justify-center py-2 px-1 rounded-lg border transition-colors duration-150 select-none overflow-hidden",
+                onMonthChange && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60",
                 isSelected
-                  ? "bg-white border-emerald-500 shadow-sm dark:bg-[#0d1624] dark:border-emerald-500/80"
+                  ? "bg-slate-50 border-emerald-500 shadow-sm dark:bg-[#0d1624] dark:border-emerald-500/80"
                   : "bg-white border-slate-200 dark:bg-[#0c1522]/80 dark:border-slate-800/60"
               )}
             >
