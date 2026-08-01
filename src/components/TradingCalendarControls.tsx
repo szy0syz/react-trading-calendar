@@ -29,7 +29,7 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
   };
 
   return (
-    <div className="flex items-center justify-between px-3.5 sm:px-6 pt-4 sm:pt-6 pb-3 sm:pb-4">
+    <div className="flex items-center justify-between px-3.5 sm:px-6 pt-3 sm:pt-4 pb-2 sm:pb-3">
       <div className="flex items-center space-x-2 sm:space-x-2.5">
         <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 dark:text-emerald-400" />
         <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">

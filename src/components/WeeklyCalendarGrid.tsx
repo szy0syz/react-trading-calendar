@@ -76,7 +76,7 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
   const weekRows = useCalendarGrid(year, month, dailyRecords, weeklySummaries);
 
   return (
-    <div className="px-3 sm:px-6 pb-4 sm:pb-6 w-full overflow-hidden">
+    <div className="px-3 sm:px-6 pb-2 sm:pb-3 w-full overflow-hidden">
       <table className="w-full table-fixed border-collapse text-left">
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">

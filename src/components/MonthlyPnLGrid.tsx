@@ -25,7 +25,7 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="flex-1 bg-slate-50 border border-slate-200 dark:bg-slate-900/40 dark:border-slate-800/80 rounded-xl p-2.5 sm:p-3.5 shadow-inner flex flex-col justify-between">
+    <div className="flex-1 bg-slate-50 border border-slate-200 dark:bg-slate-900/40 dark:border-slate-800/80 rounded-xl p-1 sm:p-2 shadow-inner flex flex-col justify-between">
       <div className="text-center mb-2">
         <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
           月度盈亏 · {year}
@@ -37,14 +37,22 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
         {months.map((m) => {
           const isSelected = m === currentMonth;
           const pnl = monthlyPnLMap.get(m);
+          const hasData = monthlyPnLMap.has(m) && pnl != null;
+          const isClickable = Boolean(onMonthChange && hasData);
 
           return (
             <div
               key={`${year}-m-${m}`}
-              onClick={() => onMonthChange?.(year, m)}
+              onClick={() => {
+                if (isClickable) {
+                  onMonthChange?.(year, m);
+                }
+              }}
               className={cn(
                 "flex flex-col items-center justify-center py-2 px-1 rounded-lg border transition-colors duration-150 select-none overflow-hidden",
-                onMonthChange && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60",
+                isClickable
+                  ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                  : "opacity-80 cursor-not-allowed",
                 isSelected
                   ? "bg-slate-50 border-emerald-500 shadow-sm dark:bg-[#0d1624] dark:border-emerald-500/80"
                   : "bg-white border-slate-200 dark:bg-[#0c1522]/80 dark:border-slate-800/60"
