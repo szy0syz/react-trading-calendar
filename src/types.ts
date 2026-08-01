@@ -69,6 +69,11 @@ export interface TradingCalendarProps {
   /** 是否在 Header 展示主题切换按钮 */
   showThemeToggle?: boolean;
 
+  /** 是否有上个月数据（未传则根据 dailyRecords / monthlySummaries 自动识别） */
+  hasPrevMonth?: boolean;
+  /** 是否有下个月数据（未传则根据 dailyRecords / monthlySummaries 自动识别） */
+  hasNextMonth?: boolean;
+
   /** 月份切换回调 */
   onMonthChange?: (year: number, month: number) => void;
   /** 点击具体日期单元格回调 */

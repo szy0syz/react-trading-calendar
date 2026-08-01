@@ -6,6 +6,7 @@ import {
   getPnLBadgeStyle,
   normalizeDateKey,
   formatDayLabel,
+  hasMonthData,
 } from './utils';
 
 describe('utils formatting helper functions', () => {
@@ -115,6 +116,34 @@ describe('utils formatting helper functions', () => {
 
     it('should return MM/DD unchanged', () => {
       expect(formatDayLabel('08/01')).toBe('08/01');
+    });
+  });
+
+  describe('hasMonthData', () => {
+    it('should return true if monthlySummaries contains valid pnl for target month', () => {
+      const summaries = [{ month: 6, pnl: 100 }, { month: 7, pnl: 200 }];
+      expect(hasMonthData(2026, 6, [], summaries)).toBe(true);
+      expect(hasMonthData(2026, 8, [], summaries)).toBe(false);
+    });
+
+    it('should return false if monthlySummary pnl is null or undefined', () => {
+      const summaries = [{ month: 6, pnl: null }, { month: 7, pnl: undefined }];
+      expect(hasMonthData(2026, 6, [], summaries)).toBe(false);
+      expect(hasMonthData(2026, 7, [], summaries)).toBe(false);
+    });
+
+    it('should return true if dailyRecords has records matching targetYear and targetMonth (YYYY-MM-DD)', () => {
+      const dailyRecords = [{ date: '2026-06-15', pnl: 50 }];
+      expect(hasMonthData(2026, 6, dailyRecords, [])).toBe(true);
+      expect(hasMonthData(2026, 7, dailyRecords, [])).toBe(false);
+      expect(hasMonthData(2025, 6, dailyRecords, [])).toBe(false);
+    });
+
+    it('should return true if dailyRecords has records matching targetMonth (MM/DD)', () => {
+      const dailyRecords = [{ date: '06/15', pnl: 50 }];
+      expect(hasMonthData(2026, 6, dailyRecords, [], 2026)).toBe(true);
+      expect(hasMonthData(2026, 7, dailyRecords, [], 2026)).toBe(false);
+      expect(hasMonthData(2025, 6, dailyRecords, [], 2026)).toBe(false);
     });
   });
 });

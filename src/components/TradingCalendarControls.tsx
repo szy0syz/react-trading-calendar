@@ -6,21 +6,25 @@ import { cn } from '../utils';
 interface TradingCalendarControlsProps {
   year: number;
   month: number;
+  hasPrevMonth?: boolean;
+  hasNextMonth?: boolean;
 }
 
 export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = React.memo(({
   year,
   month,
+  hasPrevMonth = true,
+  hasNextMonth = true,
 }) => {
   const { sectionTitle, onMonthChange } = useTradingCalendar();
 
   const handlePrevMonth = () => {
-    if (!onMonthChange) return;
+    if (!onMonthChange || !hasPrevMonth) return;
     onMonthChange(month === 1 ? year - 1 : year, month === 1 ? 12 : month - 1);
   };
 
   const handleNextMonth = () => {
-    if (!onMonthChange) return;
+    if (!onMonthChange || !hasNextMonth) return;
     onMonthChange(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1);
   };
 
@@ -37,10 +41,12 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
         <button
           type="button"
           onClick={handlePrevMonth}
+          disabled={!hasPrevMonth}
           className={cn(
             "p-0.5 sm:p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors duration-150",
             "dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800",
-            "focus:outline-none focus-visible:outline-none focus:ring-0"
+            "focus:outline-none focus-visible:outline-none focus:ring-0",
+            "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
           )}
           aria-label="上个月"
         >
@@ -54,10 +60,12 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
         <button
           type="button"
           onClick={handleNextMonth}
+          disabled={!hasNextMonth}
           className={cn(
             "p-0.5 sm:p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors duration-150",
             "dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800",
-            "focus:outline-none focus-visible:outline-none focus:ring-0"
+            "focus:outline-none focus-visible:outline-none focus:ring-0",
+            "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
           )}
           aria-label="下个月"
         >

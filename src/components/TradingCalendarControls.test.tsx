@@ -60,4 +60,36 @@ describe('<TradingCalendarControls />', () => {
     );
     expect(screen.getByText('实盘记录')).toBeInTheDocument();
   });
+
+  it('disables prev month button and shows cursor-not-allowed class when hasPrevMonth is false', () => {
+    const onMonthChangeMock = vi.fn();
+    render(
+      <TradingCalendarProvider {...buildContext({ onMonthChange: onMonthChangeMock })}>
+        <TradingCalendarControls year={2026} month={7} hasPrevMonth={false} />
+      </TradingCalendarProvider>
+    );
+
+    const prevBtn = screen.getByLabelText('上个月');
+    expect(prevBtn).toBeDisabled();
+    expect(prevBtn.className).toContain('disabled:cursor-not-allowed');
+
+    fireEvent.click(prevBtn);
+    expect(onMonthChangeMock).not.toHaveBeenCalled();
+  });
+
+  it('disables next month button and shows cursor-not-allowed class when hasNextMonth is false', () => {
+    const onMonthChangeMock = vi.fn();
+    render(
+      <TradingCalendarProvider {...buildContext({ onMonthChange: onMonthChangeMock })}>
+        <TradingCalendarControls year={2026} month={7} hasNextMonth={false} />
+      </TradingCalendarProvider>
+    );
+
+    const nextBtn = screen.getByLabelText('下个月');
+    expect(nextBtn).toBeDisabled();
+    expect(nextBtn.className).toContain('disabled:cursor-not-allowed');
+
+    fireEvent.click(nextBtn);
+    expect(onMonthChangeMock).not.toHaveBeenCalled();
+  });
 });

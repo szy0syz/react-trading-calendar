@@ -77,6 +77,7 @@ const mockMonthlySummaries: MonthlySummary[] = [
   { month: 5, pnl: 19550 },
   { month: 6, pnl: 30150 },
   { month: 7, pnl: 49796 },
+  { month: 8, pnl: 51147 },
 ];
 
 // ---------------------------------------------------------------------------

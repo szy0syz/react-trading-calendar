@@ -7,7 +7,7 @@ import { WeeklyCalendarGrid } from './components/WeeklyCalendarGrid';
 import { MonthlyPnLGrid } from './components/MonthlyPnLGrid';
 import { AnnualSummaryCard } from './components/AnnualSummaryCard';
 import { TradingCalendarFooter } from './components/TradingCalendarFooter';
-import { cn } from './utils';
+import { cn, hasMonthData } from './utils';
 
 const currentDate = new Date();
 
@@ -26,12 +26,27 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   colorScheme = 'greenUpRedDown',
   theme = 'dark',
   showThemeToggle = false,
+  hasPrevMonth,
+  hasNextMonth,
   onMonthChange,
   onDateClick,
   onThemeToggle,
   className,
   style,
 }) => {
+  const prevYear = month === 1 ? year - 1 : year;
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const nextMonth = month === 12 ? 1 : month + 1;
+
+  const computedHasPrevMonth =
+    hasPrevMonth ??
+    hasMonthData(prevYear, prevMonth, dailyRecords, monthlySummaries, year);
+
+  const computedHasNextMonth =
+    hasNextMonth ??
+    hasMonthData(nextYear, nextMonth, dailyRecords, monthlySummaries, year);
+
   return (
     <TradingCalendarProvider
       colorScheme={colorScheme}
@@ -60,7 +75,12 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
       >
         <TradingCalendarHeader />
 
-        <TradingCalendarControls year={year} month={month} />
+        <TradingCalendarControls
+          year={year}
+          month={month}
+          hasPrevMonth={computedHasPrevMonth}
+          hasNextMonth={computedHasNextMonth}
+        />
 
         <WeeklyCalendarGrid
           year={year}

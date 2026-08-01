@@ -52,13 +52,18 @@ describe('<TradingCalendar /> Root Component', () => {
     expect(onThemeToggleMock).toHaveBeenCalledWith('light');
   });
 
-  it('triggers onMonthChange when clicking month navigation buttons', () => {
+  it('triggers onMonthChange when clicking month navigation buttons if data is available', () => {
     const onMonthChangeMock = vi.fn();
 
     render(
       <TradingCalendar
         year={2026}
         month={7}
+        monthlySummaries={[
+          { month: 6, pnl: 100 },
+          { month: 7, pnl: 200 },
+          { month: 8, pnl: 300 },
+        ]}
         onMonthChange={onMonthChangeMock}
       />
     );
@@ -66,10 +71,54 @@ describe('<TradingCalendar /> Root Component', () => {
     const prevBtn = screen.getByLabelText('上个月');
     const nextBtn = screen.getByLabelText('下个月');
 
+    expect(prevBtn).not.toBeDisabled();
+    expect(nextBtn).not.toBeDisabled();
+
     fireEvent.click(prevBtn);
     expect(onMonthChangeMock).toHaveBeenCalledWith(2026, 6);
 
     fireEvent.click(nextBtn);
     expect(onMonthChangeMock).toHaveBeenCalledWith(2026, 8);
+  });
+
+  it('disables prev/next month button when no data exists for target month', () => {
+    const onMonthChangeMock = vi.fn();
+
+    render(
+      <TradingCalendar
+        year={2026}
+        month={7}
+        monthlySummaries={[{ month: 7, pnl: 200 }]} // only month 7 has data
+        onMonthChange={onMonthChangeMock}
+      />
+    );
+
+    const prevBtn = screen.getByLabelText('上个月');
+    const nextBtn = screen.getByLabelText('下个月');
+
+    expect(prevBtn).toBeDisabled();
+    expect(nextBtn).toBeDisabled();
+
+    fireEvent.click(prevBtn);
+    fireEvent.click(nextBtn);
+
+    expect(onMonthChangeMock).not.toHaveBeenCalled();
+  });
+
+  it('respects explicit hasPrevMonth and hasNextMonth props', () => {
+    render(
+      <TradingCalendar
+        year={2026}
+        month={7}
+        hasPrevMonth={false}
+        hasNextMonth={true}
+      />
+    );
+
+    const prevBtn = screen.getByLabelText('上个月');
+    const nextBtn = screen.getByLabelText('下个月');
+
+    expect(prevBtn).toBeDisabled();
+    expect(nextBtn).not.toBeDisabled();
   });
 });

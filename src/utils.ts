@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { COLOR_SCHEME_TOKENS, getPnLSentiment, pnlBadgeVariants } from './theme/colorSchemes';
-import type { ColorScheme } from './types';
+import type { ColorScheme, DailyRecord, MonthlySummary } from './types';
+
 
 // Tailwind 类名合并工具
 
@@ -73,3 +74,45 @@ export function normalizeDateKey(date: string): string {
 export function formatDayLabel(date: string): string {
   return normalizeDateKey(date);
 }
+
+/**
+ * 检查指定年份和月份是否有交易记录或月度总结数据
+ */
+export function hasMonthData(
+  targetYear: number,
+  targetMonth: number,
+  dailyRecords: DailyRecord[] = [],
+  monthlySummaries: MonthlySummary[] = [],
+  currentYear: number = targetYear
+): boolean {
+  // 1. 检查 monthlySummaries 中是否有该月份的有效 PnL 数据
+  const hasInMonthly = monthlySummaries.some(
+    (s) => s.month === targetMonth && s.pnl != null
+  );
+  if (hasInMonthly) return true;
+
+  // 2. 检查 dailyRecords 中是否有属于 targetYear 和 targetMonth 的记录
+  const hasInDaily = dailyRecords.some((record) => {
+    if (!record || !record.date) return false;
+    const dateStr = record.date.trim();
+
+    // 格式: YYYY-MM-DD
+    if (dateStr.length === 10 && dateStr[4] === '-' && dateStr[7] === '-') {
+      const y = parseInt(dateStr.slice(0, 4), 10);
+      const m = parseInt(dateStr.slice(5, 7), 10);
+      return y === targetYear && m === targetMonth;
+    }
+
+    // 格式: MM/DD
+    if (dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      const m = parseInt(parts[0], 10);
+      return m === targetMonth && targetYear === currentYear;
+    }
+
+    return false;
+  });
+
+  return hasInDaily;
+}
+
