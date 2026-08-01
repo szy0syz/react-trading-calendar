@@ -13,8 +13,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./style.css": "./dist/trading-calendar.css",
-    "./dist/trading-calendar.css": "./dist/trading-calendar.css"
+    "./style.css": "./dist/trading-calendar.css"
   },
   "files": [
     "dist"

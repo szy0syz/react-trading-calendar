@@ -69,7 +69,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
           weeklySummaries={weeklySummaries}
         />
 
-        <div className="px-3.5 sm:px-6 pb-4 sm:pb-6 flex flex-col sm:flex-row gap-3.5 items-stretch">
+        <div className="px-3.5 sm:px-6 pb-4 sm:pb-6 flex flex-row gap-3.5 items-stretch">
           <MonthlyPnLGrid
             year={year}
             currentMonth={month}
