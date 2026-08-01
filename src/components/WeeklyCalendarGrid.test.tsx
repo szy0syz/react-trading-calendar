@@ -1,7 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WeeklyCalendarGrid } from './WeeklyCalendarGrid';
+import { TradingCalendarProvider } from '../context/TradingCalendarContext';
 import { DailyRecord } from '../types';
+
+const buildContext = (overrides?: Partial<Parameters<typeof TradingCalendarProvider>[0]>) => ({
+  colorScheme: 'greenUpRedDown' as const,
+  theme: 'dark' as const,
+  title: 'Test',
+  statusText: '实时',
+  currency: 'USD',
+  updateText: '每日更新',
+  sectionTitle: '交易记录',
+  showThemeToggle: false,
+  ...overrides,
+});
 
 describe('<WeeklyCalendarGrid />', () => {
   const mockDailyRecords: DailyRecord[] = [
@@ -12,11 +25,13 @@ describe('<WeeklyCalendarGrid />', () => {
 
   it('renders weekly PnL and non-trading day cell pattern', () => {
     const { container } = render(
-      <WeeklyCalendarGrid
-        year={2026}
-        month={7}
-        dailyRecords={mockDailyRecords}
-      />
+      <TradingCalendarProvider {...buildContext()}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={mockDailyRecords}
+        />
+      </TradingCalendarProvider>
     );
 
     expect(screen.getByText('+11,245')).toBeInTheDocument();
@@ -30,12 +45,13 @@ describe('<WeeklyCalendarGrid />', () => {
     const onDateClickMock = vi.fn();
 
     render(
-      <WeeklyCalendarGrid
-        year={2026}
-        month={7}
-        dailyRecords={mockDailyRecords}
-        onDateClick={onDateClickMock}
-      />
+      <TradingCalendarProvider {...buildContext({ onDateClick: onDateClickMock })}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={mockDailyRecords}
+        />
+      </TradingCalendarProvider>
     );
 
     const targetVal = screen.getByText('+11,245');

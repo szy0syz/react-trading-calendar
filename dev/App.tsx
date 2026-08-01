@@ -1,8 +1,87 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { TradingCalendar } from '../src/TradingCalendar';
-import { ColorScheme, DailyRecord, Theme } from '../src/types';
+import { ColorScheme, DailyRecord, MonthlySummary, Theme, WeeklySummary } from '../src/types';
 
 const now = new Date();
+
+// ---------------------------------------------------------------------------
+// 辅助：根据年月动态生成当月 mock 数据（始终与当前视图月份对齐）
+// ---------------------------------------------------------------------------
+
+function buildMockData(year: number, month: number): {
+  dailyRecords: DailyRecord[];
+  weeklySummaries: WeeklySummary[];
+} {
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const dailyRecords: DailyRecord[] = [];
+
+  // 预设 PnL 种子，循环复用，模拟真实的涨跌节奏
+  const pnlSeed = [
+    -641, 10273, undefined, undefined, 11245,
+    3523, 5128, -4217, -4018, 8778,
+    15240, 4896, -3065, 4830, -5383,
+    8783, 11258, -2493, undefined, undefined,
+  ];
+
+  let seedIdx = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month - 1, d);
+    const dow = date.getDay(); // 0=Sun, 6=Sat
+
+    // 跳过周末
+    if (dow === 0 || dow === 6) continue;
+
+    const mm = String(month).padStart(2, '0');
+    const dd = String(d).padStart(2, '0');
+
+    dailyRecords.push({
+      date: `${year}-${mm}-${dd}`,
+      pnl: pnlSeed[seedIdx % pnlSeed.length],
+    });
+    seedIdx++;
+  }
+
+  // 按 ISO 周号分组，自动累计周度盈亏
+  const weekMap = new Map<number, number>();
+  for (const r of dailyRecords) {
+    if (r.pnl == null) continue;
+    const d = new Date(r.date);
+    const wn = getISOWeekNumber(d);
+    weekMap.set(wn, (weekMap.get(wn) ?? 0) + r.pnl);
+  }
+  const weeklySummaries: WeeklySummary[] = Array.from(weekMap.entries()).map(
+    ([weekNumber, pnl]) => ({ weekNumber, pnl }),
+  );
+
+  return { dailyRecords, weeklySummaries };
+}
+
+/** ISO 8601 周数（与组件内逻辑保持一致） */
+function getISOWeekNumber(d: Date): number {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
+// ---------------------------------------------------------------------------
+// 全年月度数据（固定演示，不随月份切换变化）
+// ---------------------------------------------------------------------------
+
+const mockMonthlySummaries: MonthlySummary[] = [
+  { month: 1, pnl: 71737 },
+  { month: 2, pnl: 79699 },
+  { month: 3, pnl: 25666 },
+  { month: 4, pnl: 100346 },
+  { month: 5, pnl: 19550 },
+  { month: 6, pnl: 30150 },
+  { month: 7, pnl: 49796 },
+];
+
+// ---------------------------------------------------------------------------
+// App
+// ---------------------------------------------------------------------------
 
 export function App() {
   const [year, setYear] = useState(now.getFullYear());
@@ -11,64 +90,14 @@ export function App() {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('greenUpRedDown');
   const [lastClickedDate, setLastClickedDate] = useState<string | null>(null);
 
-  // 演示 Mock 交易数据
-  const mockDailyRecords: DailyRecord[] = [
-    // Week 27
-    { date: `${year}-06-29`, pnl: -641 },
-    { date: `${year}-06-30`, pnl: 10273 },
-    { date: `${year}-07-01`, pnl: undefined },
-    { date: `${year}-07-02`, pnl: undefined },
-    { date: `${year}-07-03`, isNonTradingDay: true },
-
-    // Week 28
-    { date: `${year}-07-06`, pnl: -4709 },
-    { date: `${year}-07-07`, pnl: 11245 },
-    { date: `${year}-07-08`, pnl: 3523 },
-    { date: `${year}-07-09`, pnl: 5128 },
-    { date: `${year}-07-10`, pnl: -4217 },
-
-    // Week 29
-    { date: `${year}-07-13`, pnl: -4018 },
-    { date: `${year}-07-14`, pnl: 8778 },
-    { date: `${year}-07-15`, pnl: 15240 },
-    { date: `${year}-07-16`, pnl: 4896 },
-    { date: `${year}-07-17`, pnl: -3065 },
-
-    // Week 30
-    { date: `${year}-07-20`, pnl: 4830 },
-    { date: `${year}-07-21`, pnl: -5383 },
-    { date: `${year}-07-22`, pnl: 8783 },
-    { date: `${year}-07-23`, pnl: 11258 },
-    { date: `${year}-07-24`, pnl: -2493 },
-
-    // Week 31
-    { date: `${year}-07-27`, pnl: undefined },
-    { date: `${year}-07-28`, pnl: undefined },
-    { date: `${year}-07-29`, pnl: undefined },
-    { date: `${year}-07-30`, pnl: undefined },
-    { date: `${year}-07-31`, pnl: undefined },
-  ];
-
-  const mockWeeklySummaries = [
-    { weekNumber: 27, pnl: 9632 },
-    { weekNumber: 28, pnl: 10970 },
-    { weekNumber: 29, pnl: 21831 },
-    { weekNumber: 30, pnl: 16995 },
-    { weekNumber: 31, pnl: undefined },
-  ];
-
-  const mockMonthlySummaries = [
-    { month: 1, pnl: 71737 },
-    { month: 2, pnl: 79699 },
-    { month: 3, pnl: 25666 },
-    { month: 4, pnl: 100346 },
-    { month: 5, pnl: 19550 },
-    { month: 6, pnl: 30150 },
-    { month: 7, pnl: 49796 },
-  ];
+  // 动态计算当前视图月份的 mock 数据
+  const { dailyRecords, weeklySummaries } = useMemo(
+    () => buildMockData(year, month),
+    [year, month],
+  );
 
   const mockAnnualSummary = {
-    year: year,
+    year,
     annualizedReturnRate: 0.3696,
     totalPnL: 376944,
   };
@@ -87,7 +116,7 @@ export function App() {
             TradingCalendar 组件在线 Playground
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            纯渲染组件演示 · 独立发布 NPM · 支持主题与红绿配色切换
+            纯渲染组件演示 · 支持主题与红绿配色切换
           </p>
         </div>
 
@@ -122,8 +151,8 @@ export function App() {
       <TradingCalendar
         year={year}
         month={month}
-        dailyRecords={mockDailyRecords}
-        weeklySummaries={mockWeeklySummaries}
+        dailyRecords={dailyRecords}
+        weeklySummaries={weeklySummaries}
         monthlySummaries={mockMonthlySummaries}
         annualSummary={mockAnnualSummary}
         colorScheme={colorScheme}

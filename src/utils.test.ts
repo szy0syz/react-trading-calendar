@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { formatPnL, formatPercent, getPnLTextStyle, getPnLBadgeStyle } from './utils';
+import {
+  formatPnL,
+  formatPercent,
+  getPnLTextStyle,
+  getPnLBadgeStyle,
+  normalizeDateKey,
+  formatDayLabel,
+} from './utils';
 
 describe('utils formatting helper functions', () => {
   describe('formatPnL', () => {
@@ -19,7 +26,7 @@ describe('utils formatting helper functions', () => {
 
     it('should return "—" for undefined or null values', () => {
       expect(formatPnL(undefined)).toBe('—');
-      expect(formatPnL(null as any)).toBe('—');
+      expect(formatPnL(null)).toBe('—');
     });
   });
 
@@ -35,7 +42,7 @@ describe('utils formatting helper functions', () => {
 
     it('should return "—" for undefined or null values', () => {
       expect(formatPercent(undefined)).toBe('—');
-      expect(formatPercent(null as any)).toBe('—');
+      expect(formatPercent(null)).toBe('—');
     });
   });
 
@@ -58,6 +65,11 @@ describe('utils formatting helper functions', () => {
       const neutralClass = getPnLTextStyle(undefined, 'greenUpRedDown');
       expect(neutralClass).toContain('text-slate-400');
     });
+
+    it('should return neutral text style for null', () => {
+      const nullClass = getPnLTextStyle(null, 'greenUpRedDown');
+      expect(nullClass).toContain('text-slate-400');
+    });
   });
 
   describe('getPnLBadgeStyle', () => {
@@ -76,6 +88,33 @@ describe('utils formatting helper functions', () => {
     it('should return neutral badge style for undefined', () => {
       const style = getPnLBadgeStyle(undefined);
       expect(style).toContain('bg-slate-100');
+    });
+
+    it('should return zero badge style for 0', () => {
+      const style = getPnLBadgeStyle(0);
+      expect(style).toContain('bg-slate-200');
+    });
+  });
+
+  describe('normalizeDateKey', () => {
+    it('should convert YYYY-MM-DD to MM/DD', () => {
+      expect(normalizeDateKey('2026-07-15')).toBe('07/15');
+      expect(normalizeDateKey('2026-01-01')).toBe('01/01');
+    });
+
+    it('should return MM/DD format unchanged', () => {
+      expect(normalizeDateKey('07/15')).toBe('07/15');
+      expect(normalizeDateKey('01/01')).toBe('01/01');
+    });
+  });
+
+  describe('formatDayLabel', () => {
+    it('should format YYYY-MM-DD to MM/DD for display', () => {
+      expect(formatDayLabel('2026-08-01')).toBe('08/01');
+    });
+
+    it('should return MM/DD unchanged', () => {
+      expect(formatDayLabel('08/01')).toBe('08/01');
     });
   });
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { TradingCalendarProps } from './types';
+import { TradingCalendarProvider } from './context/TradingCalendarContext';
 import { TradingCalendarHeader } from './components/TradingCalendarHeader';
 import { TradingCalendarControls } from './components/TradingCalendarControls';
 import { WeeklyCalendarGrid } from './components/WeeklyCalendarGrid';
@@ -21,6 +22,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   updateText = '每日实时更新',
   title = '实盘交易记录',
   statusText = '实时',
+  sectionTitle = '交易记录',
   colorScheme = 'greenUpRedDown',
   theme = 'dark',
   showThemeToggle = false,
@@ -31,60 +33,54 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   style,
 }) => {
   return (
-    <div
-      data-theme={theme}
-      data-color-scheme={colorScheme}
-      style={style}
-      className={cn(
-        "tc-calendar-root w-full max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border transition-all duration-300",
-        theme === 'dark'
-          ? "bg-[#0b1322] border-slate-800 text-slate-100 dark"
-          : "bg-white border-slate-200 text-slate-900",
-        className
-      )}
+    <TradingCalendarProvider
+      colorScheme={colorScheme}
+      theme={theme}
+      title={title}
+      statusText={statusText}
+      currency={currency}
+      updateText={updateText}
+      sectionTitle={sectionTitle}
+      showThemeToggle={showThemeToggle}
+      onDateClick={onDateClick}
+      onMonthChange={onMonthChange}
+      onThemeToggle={onThemeToggle}
     >
-      <TradingCalendarHeader
-        title={title}
-        statusText={statusText}
-        theme={theme}
-        showThemeToggle={showThemeToggle}
-        onThemeToggle={onThemeToggle}
-      />
+      <div
+        data-theme={theme}
+        data-color-scheme={colorScheme}
+        style={style}
+        className={cn(
+          "tc-calendar-root w-full max-w-4xl mx-auto rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border transition-all duration-300",
+          theme === 'dark'
+            ? "bg-[#0b1322] border-slate-800 text-slate-100 dark"
+            : "bg-white border-slate-200 text-slate-900",
+          className
+        )}
+      >
+        <TradingCalendarHeader />
 
-      <TradingCalendarControls
-        year={year}
-        month={month}
-        onMonthChange={onMonthChange}
-      />
+        <TradingCalendarControls year={year} month={month} />
 
-      <WeeklyCalendarGrid
-        year={year}
-        month={month}
-        dailyRecords={dailyRecords}
-        weeklySummaries={weeklySummaries}
-        colorScheme={colorScheme}
-        onDateClick={onDateClick}
-      />
-
-      <div className="px-3.5 sm:px-6 pb-4 sm:pb-6 flex flex-col md:flex-row gap-3.5 items-stretch">
-        <MonthlyPnLGrid
+        <WeeklyCalendarGrid
           year={year}
-          currentMonth={month}
-          monthlySummaries={monthlySummaries}
-          colorScheme={colorScheme}
-          onMonthChange={onMonthChange}
+          month={month}
+          dailyRecords={dailyRecords}
+          weeklySummaries={weeklySummaries}
         />
-        <AnnualSummaryCard
-          annualSummary={annualSummary}
-          colorScheme={colorScheme}
-        />
-      </div>
 
-      <TradingCalendarFooter
-        currency={currency}
-        updateText={updateText}
-      />
-    </div>
+        <div className="px-3.5 sm:px-6 pb-4 sm:pb-6 flex flex-col md:flex-row gap-3.5 items-stretch">
+          <MonthlyPnLGrid
+            year={year}
+            currentMonth={month}
+            monthlySummaries={monthlySummaries}
+          />
+          <AnnualSummaryCard annualSummary={annualSummary} />
+        </div>
+
+        <TradingCalendarFooter />
+      </div>
+    </TradingCalendarProvider>
   );
 });
 

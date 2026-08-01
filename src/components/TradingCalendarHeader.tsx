@@ -1,26 +1,15 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { Theme } from '../types';
+import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { cn } from '../utils';
 
-interface TradingCalendarHeaderProps {
-  title?: string;
-  statusText?: string;
-  theme?: Theme;
-  showThemeToggle?: boolean;
-  onThemeToggle?: (theme: Theme) => void;
-}
+export const TradingCalendarHeader: React.FC = React.memo(() => {
+  const { title, statusText, theme, showThemeToggle, onThemeToggle } = useTradingCalendar();
 
-export const TradingCalendarHeader: React.FC<TradingCalendarHeaderProps> = React.memo(({
-  title = '实盘交易记录',
-  statusText = '实时',
-  theme = 'dark',
-  showThemeToggle = false,
-  onThemeToggle,
-}) => {
   return (
     <div className="flex items-center justify-between px-3.5 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-800/80">
       <div className="flex items-center space-x-2 sm:space-x-3 truncate">
+        {/* macOS 风格三点装饰 */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ff5f56] inline-block shadow-sm" />
           <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffbd2e] inline-block shadow-sm" />
@@ -42,14 +31,18 @@ export const TradingCalendarHeader: React.FC<TradingCalendarHeaderProps> = React
             )}
             title={`切换为${theme === 'dark' ? '白天' : '黑夜'}模式`}
           >
-            {theme === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+            {theme === 'dark'
+              ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            }
           </button>
         )}
 
+        {/* 实时状态指示灯 */}
         <div className="flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-semibold text-emerald-500 dark:text-emerald-400">
           <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500" />
           </span>
           <span>{statusText}</span>
         </div>

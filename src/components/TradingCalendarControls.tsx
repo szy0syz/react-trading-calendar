@@ -1,34 +1,27 @@
 import React from 'react';
 import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { cn } from '../utils';
 
 interface TradingCalendarControlsProps {
   year: number;
   month: number;
-  onMonthChange?: (year: number, month: number) => void;
 }
 
 export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = React.memo(({
   year,
   month,
-  onMonthChange,
 }) => {
+  const { sectionTitle, onMonthChange } = useTradingCalendar();
+
   const handlePrevMonth = () => {
     if (!onMonthChange) return;
-    if (month === 1) {
-      onMonthChange(year - 1, 12);
-    } else {
-      onMonthChange(year, month - 1);
-    }
+    onMonthChange(month === 1 ? year - 1 : year, month === 1 ? 12 : month - 1);
   };
 
   const handleNextMonth = () => {
     if (!onMonthChange) return;
-    if (month === 12) {
-      onMonthChange(year + 1, 1);
-    } else {
-      onMonthChange(year, month + 1);
-    }
+    onMonthChange(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1);
   };
 
   return (
@@ -36,7 +29,7 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
       <div className="flex items-center space-x-2 sm:space-x-2.5">
         <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 dark:text-emerald-400" />
         <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-          交易记录
+          {sectionTitle}
         </h2>
       </div>
 

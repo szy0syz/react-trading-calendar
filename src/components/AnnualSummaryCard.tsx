@@ -1,22 +1,24 @@
 import React from 'react';
 import { Info } from 'lucide-react';
-import { AnnualSummary, ColorScheme } from '../types';
+import { AnnualSummary } from '../types';
+import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { cn, formatPercent, formatPnL, getPnLTextStyle } from '../utils';
 
 interface AnnualSummaryCardProps {
   annualSummary?: AnnualSummary;
-  colorScheme?: ColorScheme;
 }
 
 export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
   annualSummary,
-  colorScheme = 'greenUpRedDown',
 }) => {
+  const { colorScheme } = useTradingCalendar();
+
   const rate = annualSummary?.annualizedReturnRate;
   const totalPnL = annualSummary?.totalPnL;
 
   return (
     <div className="w-full md:w-60 shrink-0 relative p-[1.5px] rounded-xl overflow-hidden shadow-lg border border-emerald-500/30 dark:border-emerald-500/40">
+      {/* 跑马灯边框光晕 */}
       <div className="absolute inset-[-150%] animate-border-spin bg-[conic-gradient(from_0deg,transparent_0deg,rgba(251,191,36,0.25)_18deg,#fbbf24_45deg,rgba(251,191,36,0.25)_72deg,transparent_90deg,transparent_360deg)] opacity-95 pointer-events-none" />
 
       <div className="relative z-10 w-full h-full bg-slate-50 dark:bg-[#0c1522] rounded-[10px] p-2.5 flex flex-col items-center justify-center text-center overflow-hidden">

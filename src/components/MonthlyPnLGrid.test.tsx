@@ -1,6 +1,19 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MonthlyPnLGrid } from './MonthlyPnLGrid';
+import { TradingCalendarProvider } from '../context/TradingCalendarContext';
+
+const buildContext = (overrides?: Partial<Parameters<typeof TradingCalendarProvider>[0]>) => ({
+  colorScheme: 'greenUpRedDown' as const,
+  theme: 'dark' as const,
+  title: 'Test',
+  statusText: '实时',
+  currency: 'USD',
+  updateText: '每日更新',
+  sectionTitle: '交易记录',
+  showThemeToggle: false,
+  ...overrides,
+});
 
 describe('<MonthlyPnLGrid />', () => {
   const mockMonthlySummaries = [
@@ -10,11 +23,13 @@ describe('<MonthlyPnLGrid />', () => {
 
   it('renders 12 month cards and displays PnL values', () => {
     render(
-      <MonthlyPnLGrid
-        year={2026}
-        currentMonth={7}
-        monthlySummaries={mockMonthlySummaries}
-      />
+      <TradingCalendarProvider {...buildContext()}>
+        <MonthlyPnLGrid
+          year={2026}
+          currentMonth={7}
+          monthlySummaries={mockMonthlySummaries}
+        />
+      </TradingCalendarProvider>
     );
 
     expect(screen.getByText('1月')).toBeInTheDocument();
@@ -27,12 +42,13 @@ describe('<MonthlyPnLGrid />', () => {
     const onMonthChangeMock = vi.fn();
 
     render(
-      <MonthlyPnLGrid
-        year={2026}
-        currentMonth={7}
-        monthlySummaries={mockMonthlySummaries}
-        onMonthChange={onMonthChangeMock}
-      />
+      <TradingCalendarProvider {...buildContext({ onMonthChange: onMonthChangeMock })}>
+        <MonthlyPnLGrid
+          year={2026}
+          currentMonth={7}
+          monthlySummaries={mockMonthlySummaries}
+        />
+      </TradingCalendarProvider>
     );
 
     const month5Text = screen.getByText('5月');

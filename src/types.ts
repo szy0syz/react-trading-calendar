@@ -7,7 +7,7 @@ export interface DailyRecord {
   /** 日期字符串，格式如 "YYYY-MM-DD" 或 "MM/DD" */
   date: string;
   /** 每日盈亏金额 */
-  pnl?: number;
+  pnl?: number | null;
   /** 是否为休市/非交易日 */
   isNonTradingDay?: boolean;
   /** 备注信息 */
@@ -18,14 +18,14 @@ export interface WeeklySummary {
   /** ISO 周数 */
   weekNumber: number;
   /** 当周盈亏金额 */
-  pnl?: number;
+  pnl?: number | null;
 }
 
 export interface MonthlySummary {
   /** 月份 (1 - 12) */
   month: number;
   /** 当月盈亏金额 */
-  pnl?: number;
+  pnl?: number | null;
 }
 
 export interface AnnualSummary {
@@ -59,6 +59,8 @@ export interface TradingCalendarProps {
   title?: string;
   /** 状态指示文本，默认 "实时" */
   statusText?: string;
+  /** 交易记录区域标题（Controls 区），默认 "交易记录" */
+  sectionTitle?: string;
 
   /** 涨跌配色模式：greenUpRedDown (美股/国际) | redUpGreenDown (A股) */
   colorScheme?: ColorScheme;

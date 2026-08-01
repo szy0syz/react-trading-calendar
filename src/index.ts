@@ -10,4 +10,5 @@ export type {
   ColorScheme,
   Theme,
 } from './types';
-export { formatPnL, formatPercent } from './utils';
+export { formatPnL, formatPercent, normalizeDateKey, formatDayLabel } from './utils';
+export { useTradingCalendar } from './context/TradingCalendarContext';
