@@ -17,7 +17,7 @@ export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
   const totalPnL = annualSummary?.totalPnL;
 
   return (
-    <div className="w-60 shrink-0 relative p-[1.5px] rounded-xl overflow-hidden shadow-lg border border-emerald-500/30 dark:border-emerald-500/40">
+    <div className="w-full sm:w-60 shrink-0 relative p-[1.5px] rounded-xl overflow-hidden shadow-lg border border-emerald-500/30 dark:border-emerald-500/40">
       {/* 跑马灯边框光晕 */}
       <div className="absolute inset-[-150%] animate-border-spin bg-[conic-gradient(from_0deg,transparent_0deg,rgba(251,191,36,0.25)_18deg,#fbbf24_45deg,rgba(251,191,36,0.25)_72deg,transparent_90deg,transparent_360deg)] opacity-95 pointer-events-none" />
 
