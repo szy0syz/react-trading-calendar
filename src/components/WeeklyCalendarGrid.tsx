@@ -24,13 +24,14 @@ interface CalendarDayCellProps {
 
 const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, onDateClick }) => {
   const isNonTrading = day.isNonTradingDay;
+  const isClickable = Boolean(onDateClick) && day.pnl != null;
 
   return (
     <td
-      onClick={() => onDateClick?.(day)}
+      onClick={isClickable ? () => onDateClick?.(day) : undefined}
       className={cn(
         "py-2 sm:py-3 px-0.5 sm:px-1.5 text-center relative transition-colors duration-150 rounded-md sm:rounded-lg select-none overflow-hidden",
-        onDateClick && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/40",
+        isClickable && "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/40",
         isNonTrading && "bg-diagonal-stripes border border-slate-200 dark:border-slate-800/30"
       )}
     >

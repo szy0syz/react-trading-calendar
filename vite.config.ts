@@ -11,7 +11,6 @@ export default defineConfig({
     tailwindcss(),
     dts({
       insertTypesEntry: true,
-      rollupTypes: true,
       exclude: ['**/*.test.ts', '**/*.test.tsx', '**/setupTests.ts'],
     }),
   ],

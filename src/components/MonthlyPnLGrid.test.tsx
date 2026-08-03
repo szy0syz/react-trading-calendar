@@ -51,13 +51,13 @@ describe('<MonthlyPnLGrid />', () => {
       </TradingCalendarProvider>
     );
 
-    const month5Text = screen.getByText('5月');
-    const month5Card = month5Text.closest('div');
-    expect(month5Card).not.toBeNull();
+    const month1Text = screen.getByText('1月');
+    const month1Card = month1Text.closest('div');
+    expect(month1Card).not.toBeNull();
 
-    if (month5Card) {
-      fireEvent.click(month5Card);
-      expect(onMonthChangeMock).toHaveBeenCalledWith(2026, 5);
+    if (month1Card) {
+      fireEvent.click(month1Card);
+      expect(onMonthChangeMock).toHaveBeenCalledWith(2026, 1);
     }
   });
 });

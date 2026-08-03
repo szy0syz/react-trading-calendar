@@ -68,4 +68,26 @@ describe('<WeeklyCalendarGrid />', () => {
       );
     }
   });
+
+  it('does not trigger onDateClick and lacks cursor-pointer for cells without pnl', () => {
+    const onDateClickMock = vi.fn();
+    const { container } = render(
+      <TradingCalendarProvider {...buildContext({ onDateClick: onDateClickMock })}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={mockDailyRecords}
+        />
+      </TradingCalendarProvider>
+    );
+
+    const nonTradingCell = container.querySelector('.bg-diagonal-stripes');
+    expect(nonTradingCell).not.toBeNull();
+    expect(nonTradingCell?.classList.contains('cursor-pointer')).toBe(false);
+
+    if (nonTradingCell) {
+      fireEvent.click(nonTradingCell);
+      expect(onDateClickMock).not.toHaveBeenCalled();
+    }
+  });
 });
