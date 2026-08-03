@@ -49,16 +49,16 @@ export function buildWeekRows(
   const firstDayOfMonth = new Date(year, month - 1, 1);
   const lastDayOfMonth = new Date(year, month, 0);
 
-  // 找到包含本月第一天的周的周一
+  // 找到包含本月首个交易日的周一
   const startDate = new Date(firstDayOfMonth);
-  const dow = startDate.getDay(); // 0=Sun
-  const diffToMonday = dow === 0 ? -6 : 1 - dow;
+  const dow = startDate.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  const diffToMonday = dow === 0 ? 1 : dow === 6 ? 2 : 1 - dow;
   startDate.setDate(startDate.getDate() + diffToMonday);
 
   const rows: ProcessedWeekRow[] = [];
   const currPointer = new Date(startDate);
 
-  while (currPointer <= lastDayOfMonth || rows.length < 5) {
+  while (currPointer <= lastDayOfMonth) {
     const currentWeekNum = getISOWeekNumber(currPointer);
     const daysInWeek: (DailyRecord | null)[] = [];
 

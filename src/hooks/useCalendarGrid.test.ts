@@ -104,5 +104,27 @@ describe('useCalendarGrid pure functions', () => {
       const rows = buildWeekRows(2025, 12, new Map());
       expect(rows.length).toBeGreaterThanOrEqual(5);
     });
+
+    it('should skip previous month week when month starts on Sunday (e.g. March 2026)', () => {
+      // 2026-03-01 is Sunday. Week 9 (Feb 23-27) has 0 days in March.
+      // First trading row must be Week 10 starting on 03/02.
+      const rows = buildWeekRows(2026, 3, new Map());
+      expect(rows[0].weekNumber).toBe(10);
+      expect(rows[0].days[0]?.date).toBe('03/02');
+      expect(rows.length).toBe(5);
+    });
+
+    it('should skip previous month week when month starts on Saturday (e.g. August 2026)', () => {
+      // 2026-08-01 is Saturday.
+      // First trading row must start on Monday 08/03.
+      const rows = buildWeekRows(2026, 8, new Map());
+      expect(rows[0].days[0]?.date).toBe('08/03');
+      expect(rows.length).toBe(5);
+    });
+
+    it('should return exactly 4 rows for a 28-day February starting on Monday (e.g. Feb 2021)', () => {
+      const rows = buildWeekRows(2021, 2, new Map());
+      expect(rows.length).toBe(4);
+    });
   });
 });
