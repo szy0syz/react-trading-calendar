@@ -1,6 +1,6 @@
 {
   "name": "react-trading-calendar",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Pure presentational daily trading record calendar component in React with Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
