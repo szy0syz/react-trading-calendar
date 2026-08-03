@@ -18,6 +18,8 @@ export interface TradingCalendarContextValue {
   updateText: string;
   /** 交易记录区域标题（Controls 区标题）*/
   sectionTitle: string;
+  /** 布局密度 */
+  density?: 'compact' | 'normal';
   /** 是否展示主题切换按钮 */
   showThemeToggle: boolean;
   /** 点击具体日期单元格回调 */
@@ -38,6 +40,7 @@ const defaultContextValue: TradingCalendarContextValue = {
   currency: '美元 (USD)',
   updateText: '每日实时更新',
   sectionTitle: '交易记录',
+  density: 'compact',
   showThemeToggle: false,
 };
 
@@ -46,15 +49,22 @@ export const TradingCalendarContext =
 
 // Provider 组件
 
-interface TradingCalendarProviderProps extends TradingCalendarContextValue {
+interface TradingCalendarProviderProps extends Partial<TradingCalendarContextValue> {
   children: React.ReactNode;
 }
 
 export const TradingCalendarProvider: React.FC<TradingCalendarProviderProps> = ({
   children,
+  density = 'compact',
   ...value
 }) => (
-  <TradingCalendarContext.Provider value={value}>
+  <TradingCalendarContext.Provider
+    value={{
+      ...defaultContextValue,
+      ...value,
+      density,
+    }}
+  >
     {children}
   </TradingCalendarContext.Provider>
 );

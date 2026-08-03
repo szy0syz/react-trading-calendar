@@ -14,7 +14,8 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
   currentMonth,
   monthlySummaries = [],
 }) => {
-  const { colorScheme, onMonthChange } = useTradingCalendar();
+  const { colorScheme, density, onMonthChange } = useTradingCalendar();
+  const isCompact = density === 'compact';
 
   // O(1) 月度数据查找（useMemo 避免每次渲染重建 Map）
   const monthlyPnLMap = React.useMemo(
@@ -25,9 +26,12 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
 
   return (
-    <div className="flex-1 bg-slate-50 border border-slate-200 dark:bg-slate-900/40 dark:border-slate-800/80 rounded-xl p-1 sm:p-2 shadow-inner flex flex-col justify-between">
-      <div className="text-center mb-2">
-        <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+    <div className={cn(
+      "flex-1 bg-slate-50/50 border border-slate-200 dark:bg-[#0b1322]/80 dark:border-slate-800/80 rounded-xl shadow-inner flex flex-col justify-between",
+      isCompact ? "p-2 sm:p-2.5" : "p-2.5 sm:p-3.5"
+    )}>
+      <div className="text-center mb-1.5">
+        <span className="text-[11px] sm:text-xs font-medium tracking-wider text-slate-500 dark:text-slate-400">
           月度盈亏 · {year}
         </span>
       </div>
@@ -49,13 +53,14 @@ export const MonthlyPnLGrid: React.FC<MonthlyPnLGridProps> = React.memo(({
                 }
               }}
               className={cn(
-                "flex flex-col items-center justify-center py-2 px-1 rounded-lg border transition-colors duration-150 select-none overflow-hidden",
+                "flex flex-col items-center justify-center rounded-lg border transition-all duration-150 select-none overflow-hidden",
+                isCompact ? "py-1.5 px-0.5" : "py-2 px-1",
                 isClickable
                   ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60"
                   : "opacity-80 cursor-not-allowed",
                 isSelected
-                  ? "bg-slate-50 border-emerald-500 shadow-sm dark:bg-[#0d1624] dark:border-emerald-500/80"
-                  : "bg-white border-slate-200 dark:bg-[#0c1522]/80 dark:border-slate-800/60"
+                  ? "bg-slate-100 border-emerald-500 shadow-sm dark:bg-[#121d2d] dark:border-emerald-500/90"
+                  : "bg-white border-slate-200 dark:bg-[#101926] dark:border-slate-800/40"
               )}
             >
               <span className="text-[10px] sm:text-[11px] font-medium text-slate-600 dark:text-slate-300 mb-0.5">

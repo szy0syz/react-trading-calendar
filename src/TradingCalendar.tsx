@@ -25,6 +25,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   sectionTitle = '交易记录',
   colorScheme = 'greenUpRedDown',
   theme = 'dark',
+  density = 'compact',
   showThemeToggle = false,
   hasPrevMonth,
   hasNextMonth,
@@ -51,6 +52,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
     <TradingCalendarProvider
       colorScheme={colorScheme}
       theme={theme}
+      density={density}
       title={title}
       statusText={statusText}
       currency={currency}

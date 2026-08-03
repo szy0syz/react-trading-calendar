@@ -121,4 +121,12 @@ describe('<TradingCalendar /> Root Component', () => {
     expect(prevBtn).toBeDisabled();
     expect(nextBtn).not.toBeDisabled();
   });
+
+  it('renders correctly with density prop', () => {
+    const { container, rerender } = render(<TradingCalendar density="compact" />);
+    expect(container.querySelector('.tc-calendar-root')).toBeInTheDocument();
+
+    rerender(<TradingCalendar density="normal" />);
+    expect(container.querySelector('.tc-calendar-root')).toBeInTheDocument();
+  });
 });

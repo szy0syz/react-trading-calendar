@@ -39,7 +39,7 @@ export const COLOR_SCHEME_TOKENS: Record<ColorScheme, ColorTokens> = {
 // CVA 变体：周度汇总徽章
 // positive/negative 的颜色 token 由调用者从 COLOR_SCHEME_TOKENS 中注入（见 getPnLBadgeStyle）
 export const pnlBadgeVariants = cva(
-  'inline-flex items-center justify-center w-full px-1 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-mono font-bold border shadow-sm transition-colors duration-150 truncate',
+  'inline-flex items-center justify-center w-full px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-mono font-bold border shadow-sm transition-colors duration-150 truncate',
   {
     variants: {
       sentiment: {

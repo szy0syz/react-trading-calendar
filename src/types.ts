@@ -81,6 +81,8 @@ export interface TradingCalendarProps {
   /** 主题切换回调 */
   onThemeToggle?: (theme: Theme) => void;
 
+  /** 布局密度：compact (紧凑模式，默认) | normal (舒展模式) */
+  density?: 'compact' | 'normal';
   /** 根容器自定义类名 */
   className?: string;
   /** 根容器自定义样式 */
