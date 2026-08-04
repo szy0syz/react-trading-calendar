@@ -4,6 +4,7 @@ import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { useCalendarGrid } from '../hooks/useCalendarGrid';
 import { cn, formatPnL, formatDayLabel, getPnLBadgeStyle, getPnLTextStyle } from '../utils';
 import type { ColorScheme } from '../types';
+import { CalendarDayTooltip } from './CalendarDayTooltip';
 
 // 仅保留数据相关 props，样式/回调均从 Context 消费
 
@@ -26,12 +27,13 @@ interface CalendarDayCellProps {
 const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isCompact = true, onDateClick }) => {
   const isNonTrading = day.isNonTradingDay;
   const isClickable = Boolean(onDateClick) && day.pnl != null;
+  const hasTrades = day.tradesCount != null && day.tradesCount > 0;
 
   return (
     <td
       onClick={isClickable ? () => onDateClick?.(day) : undefined}
       className={cn(
-        "text-center relative transition-colors duration-150 rounded-md select-none overflow-hidden",
+        "text-center relative group/cell transition-colors duration-150 rounded-md select-none",
         isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-1.5 sm:rounded-lg",
         isClickable
           ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/40"
@@ -50,6 +52,12 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
           {formatPnL(day.pnl)}
         </span>
       </div>
+
+      {hasTrades && (
+        <div className="hidden group-hover/cell:block">
+          <CalendarDayTooltip day={day} />
+        </div>
+      )}
     </td>
   );
 };
@@ -83,7 +91,7 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
   const isCompact = density === 'compact';
 
   return (
-    <div className="px-3.5 sm:px-6 pb-2 sm:pb-3 w-full overflow-hidden">
+    <div className="px-3.5 sm:px-6 pb-2 sm:pb-3 w-full overflow-visible">
       <table className="w-full table-fixed border-collapse text-left">
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">

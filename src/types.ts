@@ -8,6 +8,8 @@ export interface DailyRecord {
   date: string;
   /** 每日盈亏金额 */
   pnl?: number | null;
+  /** 当日交易笔数 */
+  tradesCount?: number | null;
   /** 是否为休市/非交易日 */
   isNonTradingDay?: boolean;
   /** 备注信息 */

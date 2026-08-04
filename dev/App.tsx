@@ -23,6 +23,14 @@ function buildMockData(year: number, month: number): {
     8783, 11258, -2493, undefined, undefined,
   ];
 
+  // 预设交易笔数 mock 数据
+  const tradesCountSeed: (number | null | undefined)[] = [
+    2, 12, 0, null, 8,
+    3, undefined, 6, 0, 15,
+    18, 7, null, 9, 11,
+    8, 14, 0, undefined, undefined,
+  ];
+
   let seedIdx = 0;
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(year, month - 1, d);
@@ -34,9 +42,13 @@ function buildMockData(year: number, month: number): {
     const mm = String(month).padStart(2, '0');
     const dd = String(d).padStart(2, '0');
 
+    const pnl = pnlSeed[seedIdx % pnlSeed.length];
+    const tradesCount = tradesCountSeed[seedIdx % tradesCountSeed.length];
+
     dailyRecords.push({
       date: `${year}-${mm}-${dd}`,
-      pnl: pnlSeed[seedIdx % pnlSeed.length],
+      pnl,
+      tradesCount,
     });
     seedIdx++;
   }

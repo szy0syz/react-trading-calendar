@@ -90,4 +90,26 @@ describe('<WeeklyCalendarGrid />', () => {
       expect(onDateClickMock).not.toHaveBeenCalled();
     }
   });
+
+  it('renders trade count tooltip only when tradesCount is a positive number', () => {
+    const recordsWithTrades: DailyRecord[] = [
+      { date: '2026-07-06', pnl: -641, tradesCount: 0 },
+      { date: '2026-07-07', pnl: 11245, tradesCount: 12 },
+      { date: '2026-07-08', pnl: -1200, tradesCount: null },
+      { date: '2026-07-09', pnl: 3523, tradesCount: undefined },
+    ];
+
+    render(
+      <TradingCalendarProvider {...buildContext()}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={recordsWithTrades}
+        />
+      </TradingCalendarProvider>
+    );
+
+    expect(screen.getByText('12 笔交易')).toBeInTheDocument();
+    expect(screen.queryByText('0 笔交易')).not.toBeInTheDocument();
+  });
 });
