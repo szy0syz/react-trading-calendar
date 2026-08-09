@@ -16,13 +16,25 @@ describe('utils formatting helper functions', () => {
       expect(formatPnL(500)).toBe('+500');
     });
 
+    it('should format positive float PnL by rounding to integer', () => {
+      expect(formatPnL(10273.4)).toBe('+10,273');
+      expect(formatPnL(10273.5)).toBe('+10,274');
+    });
+
     it('should format negative PnL with minus sign and comma separators', () => {
       expect(formatPnL(-4709)).toBe('-4,709');
       expect(formatPnL(-100)).toBe('-100');
     });
 
-    it('should format 0 as "0"', () => {
+    it('should format negative float PnL by rounding to integer', () => {
+      expect(formatPnL(-4709.2)).toBe('-4,709');
+      expect(formatPnL(-4709.7)).toBe('-4,710');
+    });
+
+    it('should format 0 and values rounding to 0 as "0"', () => {
       expect(formatPnL(0)).toBe('0');
+      expect(formatPnL(0.4)).toBe('0');
+      expect(formatPnL(-0.3)).toBe('0');
     });
 
     it('should return "—" for undefined or null values', () => {
@@ -32,13 +44,20 @@ describe('utils formatting helper functions', () => {
   });
 
   describe('formatPercent', () => {
-    it('should format positive percentage correctly', () => {
-      expect(formatPercent(0.3696)).toBe('+36.96%');
-      expect(formatPercent(0.1)).toBe('+10.00%');
+    it('should format positive percentage correctly rounded to integer', () => {
+      expect(formatPercent(0.3696)).toBe('+37%');
+      expect(formatPercent(0.1)).toBe('+10%');
+      expect(formatPercent(0.1234)).toBe('+12%');
     });
 
-    it('should format negative percentage correctly', () => {
-      expect(formatPercent(-0.155)).toBe('-15.50%');
+    it('should format negative percentage correctly rounded to integer', () => {
+      expect(formatPercent(-0.155)).toBe('-15%');
+      expect(formatPercent(-0.1234)).toBe('-12%');
+    });
+
+    it('should format 0% correctly', () => {
+      expect(formatPercent(0)).toBe('0%');
+      expect(formatPercent(0.001)).toBe('0%');
     });
 
     it('should return "—" for undefined or null values', () => {

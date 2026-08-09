@@ -12,18 +12,20 @@ export function cn(...inputs: ClassValue[]) {
 
 // 数值格式化
 
-/** 格式化 PnL 金额，undefined/null 返回 "—" */
+/** 格式化 PnL 金额，四舍五入不要小数，undefined/null 返回 "—" */
 export function formatPnL(val?: number | null): string {
   if (val == null) return '—';
-  if (val === 0) return '0';
-  const formatted = Math.abs(val).toLocaleString('en-US');
-  return val > 0 ? `+${formatted}` : `-${formatted}`;
+  const rounded = Math.round(val);
+  if (rounded === 0) return '0';
+  const formatted = Math.abs(rounded).toLocaleString('en-US');
+  return rounded > 0 ? `+${formatted}` : `-${formatted}`;
 }
 
-/** 格式化百分比（小数形式输入，如 0.3696 → "+36.96%"） */
+/** 格式化百分比（小数形式输入，如 0.3696 → "+37%"），四舍五入不要小数 */
 export function formatPercent(val?: number | null): string {
   if (val == null) return '—';
-  const pct = (val * 100).toFixed(2);
+  const pct = Math.round(val * 100);
+  if (pct === 0) return '0%';
   return val > 0 ? `+${pct}%` : `${pct}%`;
 }
 

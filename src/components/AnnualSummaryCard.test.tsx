@@ -29,7 +29,7 @@ describe('<AnnualSummaryCard />', () => {
     );
 
     expect(screen.getByText('年化收益率')).toBeInTheDocument();
-    expect(screen.getByText('+36.96%')).toBeInTheDocument();
+    expect(screen.getByText('+37%')).toBeInTheDocument();
     expect(screen.getByText('今年收益')).toBeInTheDocument();
     expect(screen.getByText('+376,944')).toBeInTheDocument();
   });
