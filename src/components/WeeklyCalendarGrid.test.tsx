@@ -112,4 +112,27 @@ describe('<WeeklyCalendarGrid />', () => {
     expect(screen.getByText('12 笔交易')).toBeInTheDocument();
     expect(screen.queryByText('0 笔交易')).not.toBeInTheDocument();
   });
+
+  it('renders review note glow badge when hasNote is true and hides when false/undefined', () => {
+    const recordsWithNotes: DailyRecord[] = [
+      { date: '2026-07-06', pnl: 250, hasNote: true },
+      { date: '2026-07-07', pnl: -180, hasNote: false },
+      { date: '2026-07-08', pnl: 50 },
+    ];
+
+    render(
+      <TradingCalendarProvider {...buildContext()}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={recordsWithNotes}
+        />
+      </TradingCalendarProvider>
+    );
+
+    const badges = screen.getAllByTestId('review-note-badge');
+    expect(badges.length).toBe(1);
+    expect(badges[0]).toBeInTheDocument();
+    expect(badges[0]).toHaveAttribute('aria-label', '有复盘笔记');
+  });
 });

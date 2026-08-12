@@ -14,6 +14,8 @@ export interface DailyRecord {
   isNonTradingDay?: boolean;
   /** 备注信息 */
   note?: string;
+  /** 是否存在复盘笔记，为 true 时单元格右上角会显示微光点 Badge */
+  hasNote?: boolean;
 }
 
 export interface WeeklySummary {

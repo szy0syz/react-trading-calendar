@@ -31,6 +31,13 @@ function buildMockData(year: number, month: number): {
     8, 14, 0, undefined, undefined,
   ];
 
+  // 预设复盘笔记 hasNote mock 数据（部分日期为 true）
+  const hasNoteSeed: boolean[] = [
+    true, false, false, true, false,
+    false, true, false, false, false,
+    true, false, true, false, false,
+  ];
+
   let seedIdx = 0;
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(year, month - 1, d);
@@ -44,11 +51,13 @@ function buildMockData(year: number, month: number): {
 
     const pnl = pnlSeed[seedIdx % pnlSeed.length];
     const tradesCount = tradesCountSeed[seedIdx % tradesCountSeed.length];
+    const hasNote = hasNoteSeed[seedIdx % hasNoteSeed.length];
 
     dailyRecords.push({
       date: `${year}-${mm}-${dd}`,
       pnl,
       tradesCount,
+      hasNote,
     });
     seedIdx++;
   }
