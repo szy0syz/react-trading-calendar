@@ -109,6 +109,9 @@ describe('<WeeklyCalendarGrid />', () => {
       </TradingCalendarProvider>
     );
 
+    const cell = screen.getByText('+11,245');
+    fireEvent.mouseEnter(cell);
+
     expect(screen.getByText('12 笔交易')).toBeInTheDocument();
     expect(screen.queryByText('0 笔交易')).not.toBeInTheDocument();
   });

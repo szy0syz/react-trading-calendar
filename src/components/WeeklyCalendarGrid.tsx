@@ -5,6 +5,7 @@ import { useCalendarGrid } from '../hooks/useCalendarGrid';
 import { cn, formatPnL, formatDayLabel, getPnLBadgeStyle, getPnLTextStyle } from '../utils';
 import type { ColorScheme } from '../types';
 import { CalendarDayTooltip } from './CalendarDayTooltip';
+import { Poptip } from './Poptip';
 
 // 仅保留数据相关 props，样式/回调均从 Context 消费
 
@@ -29,44 +30,52 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
   const isClickable = Boolean(onDateClick) && day.pnl != null;
   const hasTrades = day.tradesCount != null && day.tradesCount > 0;
 
-  return (
-    <td
-      onClick={isClickable ? () => onDateClick?.(day) : undefined}
+  const cellBody = (
+    <div
       className={cn(
-        "text-center relative group/cell transition-colors duration-150 rounded-md select-none",
+        "flex flex-col items-center justify-center space-y-0.5 w-full h-full rounded-md transition-colors duration-150 select-none",
         isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-1.5 sm:rounded-lg",
-        isClickable
-          ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/40"
-          : "cursor-default",
+        isClickable ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50" : "cursor-default",
         isNonTrading && "bg-diagonal-stripes border border-slate-200/50 dark:border-slate-800/40 opacity-70"
       )}
     >
-      <div className="flex flex-col items-center justify-center space-y-0.5">
-        <div className="relative inline-flex items-center justify-center">
-          <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 dark:text-slate-400">
-            {formatDayLabel(day.date)}
-          </span>
-          {day.hasNote && (
-            <span
-              data-testid="review-note-badge"
-              aria-label="有复盘笔记"
-              title="有复盘笔记"
-              className="absolute -right-2 top-0.5 pointer-events-none block h-1 w-1 rounded-full bg-cyan-400/90 dark:bg-cyan-300/90 shadow-[0_0_4px_rgba(34,211,238,0.6)]"
-            />
-          )}
-        </div>
-        <span className={cn(
-          "text-xs sm:text-sm font-mono font-bold tracking-tight truncate w-full inline-block mt-0.5",
-          getPnLTextStyle(day.pnl, colorScheme)
-        )}>
-          {formatPnL(day.pnl)}
+      <div className="relative inline-flex items-center justify-center">
+        <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 dark:text-slate-400">
+          {formatDayLabel(day.date)}
         </span>
+        {day.hasNote && (
+          <span
+            data-testid="review-note-badge"
+            aria-label="有复盘笔记"
+            title="有复盘笔记"
+            className="absolute -right-2 top-0.5 pointer-events-none block h-1 w-1 rounded-full bg-cyan-400/90 dark:bg-cyan-300/90 shadow-[0_0_4px_rgba(34,211,238,0.6)]"
+          />
+        )}
       </div>
+      <span className={cn(
+        "text-xs sm:text-sm font-mono font-bold tracking-tight truncate w-full inline-block mt-0.5",
+        getPnLTextStyle(day.pnl, colorScheme)
+      )}>
+        {formatPnL(day.pnl)}
+      </span>
+    </div>
+  );
 
-      {hasTrades && (
-        <div className="hidden group-hover/cell:block">
-          <CalendarDayTooltip day={day} />
-        </div>
+  return (
+    <td
+      onClick={isClickable ? () => onDateClick?.(day) : undefined}
+      className="text-center p-0 align-middle"
+    >
+      {hasTrades ? (
+        <Poptip
+          content={<CalendarDayTooltip day={day} />}
+          placement="top"
+          className="w-full h-full flex"
+        >
+          {cellBody}
+        </Poptip>
+      ) : (
+        cellBody
       )}
     </td>
   );

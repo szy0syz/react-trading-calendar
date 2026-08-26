@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   formatPnL,
   formatPercent,
+  formatCapital,
   getPnLTextStyle,
   getPnLBadgeStyle,
   normalizeDateKey,
@@ -63,6 +64,36 @@ describe('utils formatting helper functions', () => {
     it('should return "—" for undefined or null values', () => {
       expect(formatPercent(undefined)).toBe('—');
       expect(formatPercent(null)).toBe('—');
+    });
+  });
+
+  describe('formatCapital', () => {
+    it('should format thousands as $Xk', () => {
+      expect(formatCapital(100000)).toBe('$100k');
+      expect(formatCapital(50000)).toBe('$50k');
+      expect(formatCapital(150500)).toBe('$150.5k');
+    });
+
+    it('should format millions as $XM', () => {
+      expect(formatCapital(1000000)).toBe('$1M');
+      expect(formatCapital(1500000)).toBe('$1.5M');
+      expect(formatCapital(2200000)).toBe('$2.2M');
+    });
+
+    it('should format small numbers as $X', () => {
+      expect(formatCapital(500)).toBe('$500');
+    });
+
+    it('should return "—" for null or undefined or NaN by default', () => {
+      expect(formatCapital(undefined)).toBe('—');
+      expect(formatCapital(null)).toBe('—');
+      expect(formatCapital(NaN)).toBe('—');
+    });
+
+    it('should use custom fallback value when provided', () => {
+      expect(formatCapital(undefined, '$50k')).toBe('$50k');
+      expect(formatCapital(null, '$50k')).toBe('$50k');
+      expect(formatCapital(NaN, '$50k')).toBe('$50k');
     });
   });
 

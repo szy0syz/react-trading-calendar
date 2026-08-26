@@ -39,6 +39,12 @@ export interface AnnualSummary {
   annualizedReturnRate: number;
   /** 今年累计收益总额 */
   totalPnL: number;
+  /**
+   * 初始本金/金额原始数值（可选，未提供时不显示提示气泡与图标）。
+   * 传入完整数值（例如 100000、120000 或 1500000，无需手动除以 1000）。
+   * 组件内部会自动转换为友好的格式（如 100000 → "$100k", 120000 → "$120k", 1500000 → "$1.5M"）。
+   */
+  initialCapital?: number;
 }
 
 export interface TradingCalendarProps {

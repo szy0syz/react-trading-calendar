@@ -29,6 +29,24 @@ export function formatPercent(val?: number | null): string {
   return val > 0 ? `+${pct}%` : `${pct}%`;
 }
 
+/** 格式化本金/资金金额简写（例如 100000 → "$100k", 1500000 → "$1.5M"），支持可选 fallback（默认 "—"） */
+export function formatCapital(val?: number | null, fallback = '—'): string {
+  if (val == null || isNaN(val)) return fallback;
+  const absVal = Math.abs(val);
+  const sign = val < 0 ? '-' : '';
+  if (absVal >= 1_000_000) {
+    const m = absVal / 1_000_000;
+    return `${sign}$${m % 1 === 0 ? m : m.toFixed(1)}M`;
+  }
+  if (absVal >= 1_000) {
+    const k = absVal / 1_000;
+    return `${sign}$${k % 1 === 0 ? k : k.toFixed(1)}k`;
+  }
+  return `${sign}$${absVal.toLocaleString('en-US')}`;
+}
+
+
+
 // PnL 样式工具（消费 COLOR_SCHEME_TOKENS 配置，无 if-else 枚举）
 
 /** 返回 PnL 文本颜色 + 字重 Tailwind 类 */
