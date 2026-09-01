@@ -1,6 +1,6 @@
 {
   "name": "react-trading-calendar",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "Pure presentational daily trading record calendar component in React with Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -50,7 +50,14 @@
   ],
   "author": "szy0syz",
   "license": "MIT",
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@12.0.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^12.0.0",
+      "onFail": "download"
+    }
+  },
   "engines": {
     "node": ">=18.0.0"
   },

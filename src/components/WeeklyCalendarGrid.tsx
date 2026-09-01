@@ -90,7 +90,7 @@ interface WeekSummaryBadgeProps {
 }
 
 const WeekSummaryBadge: React.FC<WeekSummaryBadgeProps> = ({ weeklyPnL, colorScheme, isCompact = true }) => (
-  <td className={cn("text-center px-0.5 sm:px-2", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")}>
+  <td className={cn("text-center px-0.5 sm:px-1.5", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")}>
     <span className={getPnLBadgeStyle(weeklyPnL, colorScheme)}>
       {formatPnL(weeklyPnL)}
     </span>
@@ -110,17 +110,20 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
   const isCompact = density === 'compact';
 
   return (
-    <div className="px-3.5 sm:px-6 pb-2 sm:pb-3 w-full overflow-visible">
+    <div className="px-2 sm:px-6 pb-2 sm:pb-3 w-full overflow-visible">
       <table className="w-full table-fixed border-collapse text-left">
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
             <th className={cn("hidden md:table-cell px-1 font-normal w-12 sm:w-20 text-slate-400", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")} />
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周一</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周二</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周三</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周四</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周五</th>
-            <th className={cn("text-center w-[20%] sm:w-[18%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周度盈亏</th>
+            <th className={cn("text-center w-[17%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周一</th>
+            <th className={cn("text-center w-[17%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周二</th>
+            <th className={cn("text-center w-[17%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周三</th>
+            <th className={cn("text-center w-[17%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周四</th>
+            <th className={cn("text-center w-[17%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周五</th>
+            <th className={cn("text-center w-[15%] sm:w-[18%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>
+              <span className="sm:hidden">周汇总</span>
+              <span className="hidden sm:inline">周度盈亏</span>
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
