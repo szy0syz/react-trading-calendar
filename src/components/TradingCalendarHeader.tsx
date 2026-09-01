@@ -7,7 +7,10 @@ export const TradingCalendarHeader: React.FC = React.memo(() => {
   const { title, statusText, theme, showThemeToggle, onThemeToggle } = useTradingCalendar();
 
   return (
-    <div className="flex items-center justify-between px-2 sm:px-6 py-2 sm:py-3 border-b border-slate-200 dark:border-slate-800/80">
+    <div className={cn(
+      "flex items-center justify-between px-2 sm:px-6 py-2 sm:py-3 border-b border-slate-200 dark:border-slate-800/80",
+      "bg-slate-50 dark:bg-[#16202f]"
+    )}>
       <div className="flex items-center space-x-2 sm:space-x-3 truncate">
         {/* macOS 风格三点装饰 */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
