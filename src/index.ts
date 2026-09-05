@@ -9,6 +9,8 @@ export type {
   WeeklySummary,
   MonthlySummary,
   AnnualSummary,
+  AnnualSummaryRenderProps,
+  CustomAnnualSummary,
   ColorScheme,
   Theme,
 } from './types';

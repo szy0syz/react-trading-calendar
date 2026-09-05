@@ -73,5 +73,40 @@ describe('<AnnualSummaryCard />', () => {
     expect(screen.queryByLabelText('年化收益率说明')).not.toBeInTheDocument();
     expect(screen.queryByText(/初始金额/)).not.toBeInTheDocument();
   });
+
+  it('renders customAnnualSummary when provided instead of default rate and pnl', () => {
+    render(
+      <TradingCalendarProvider {...defaultContext}>
+        <AnnualSummaryCard
+          annualSummary={mockAnnualSummary}
+          customAnnualSummary={<div data-testid="custom-annual-content">Custom Stats Content</div>}
+        />
+      </TradingCalendarProvider>
+    );
+
+    expect(screen.getByTestId('custom-annual-content')).toBeInTheDocument();
+    expect(screen.getByText('Custom Stats Content')).toBeInTheDocument();
+    expect(screen.queryByText('年化收益率')).not.toBeInTheDocument();
+    expect(screen.queryByText('今年收益')).not.toBeInTheDocument();
+  });
+
+  it('renders customAnnualSummary when passed as a render function receiving annualSummary', () => {
+    render(
+      <TradingCalendarProvider {...defaultContext}>
+        <AnnualSummaryCard
+          annualSummary={mockAnnualSummary}
+          customAnnualSummary={({ annualSummary }) => (
+            <div data-testid="custom-render-func">
+              Year {annualSummary?.year} PnL {annualSummary?.totalPnL}
+            </div>
+          )}
+        />
+      </TradingCalendarProvider>
+    );
+
+    expect(screen.getByTestId('custom-render-func')).toBeInTheDocument();
+    expect(screen.getByText('Year 2026 PnL 376944')).toBeInTheDocument();
+    expect(screen.queryByText('年化收益率')).not.toBeInTheDocument();
+  });
 });
 

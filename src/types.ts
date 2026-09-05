@@ -47,6 +47,19 @@ export interface AnnualSummary {
   initialCapital?: number;
 }
 
+export interface AnnualSummaryRenderProps {
+  /** 当前年度统计基础数据 (年化收益率, 今年收益, 初始金额等) */
+  annualSummary?: AnnualSummary;
+  /** 当前涨跌配色模式 */
+  colorScheme: ColorScheme;
+  /** 当前主题模式 */
+  theme: Theme;
+}
+
+export type CustomAnnualSummary =
+  | React.ReactNode
+  | ((props: AnnualSummaryRenderProps) => React.ReactNode);
+
 export interface TradingCalendarProps {
   /** 视图年份，默认当前系统年份 */
   year?: number;
@@ -60,6 +73,11 @@ export interface TradingCalendarProps {
   monthlySummaries?: MonthlySummary[];
   /** 年度与年化收益总结 */
   annualSummary?: AnnualSummary;
+  /**
+   * 自定义年度统计渲染内容（可选，支持 ReactNode 或 Render Function）。
+   * 传入时将完全替换跑马灯内部默认的所有内容（包括年化收益率、今年收益、初始金额提示等），外框跑马灯效果与尺寸约束保持不变。
+   */
+  customAnnualSummary?: CustomAnnualSummary;
 
   /** 货币单位名称，默认 "美元 (USD)" */
   currency?: string;

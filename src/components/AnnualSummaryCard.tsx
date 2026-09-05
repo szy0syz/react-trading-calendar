@@ -1,18 +1,21 @@
 import React from 'react';
 import { Info } from 'lucide-react';
-import { AnnualSummary } from '../types';
+import { AnnualSummary, CustomAnnualSummary } from '../types';
 import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { cn, formatCapital, formatPercent, formatPnL, getPnLTextStyle } from '../utils';
 import { Poptip } from './Poptip';
 
 interface AnnualSummaryCardProps {
   annualSummary?: AnnualSummary;
+  /** 自定义年度统计渲染内容，替换跑马灯内部默认的所有内容（包括年化、今年收益、初始金额等） */
+  customAnnualSummary?: CustomAnnualSummary;
 }
 
 export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
   annualSummary,
+  customAnnualSummary,
 }) => {
-  const { colorScheme } = useTradingCalendar();
+  const { colorScheme, theme } = useTradingCalendar();
 
   const rate = annualSummary?.annualizedReturnRate;
   const totalPnL = annualSummary?.totalPnL;
@@ -25,9 +28,15 @@ export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
         <div className="absolute inset-[-150%] animate-border-spin bg-[conic-gradient(from_0deg,transparent_0deg,rgba(251,191,36,0.25)_18deg,#fbbf24_45deg,rgba(251,191,36,0.25)_72deg,transparent_90deg,transparent_360deg)] opacity-95" />
       </div>
 
-      <div className="relative z-10 w-full h-full bg-slate-50 dark:bg-[#0c1522] rounded-[10px] p-2.5 flex flex-col items-center justify-center text-center">
-        <div className="flex items-center space-x-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          <span>年化收益率</span>
+      <div className="relative z-10 w-full h-full bg-slate-50 dark:bg-[#0c1522] rounded-[10px] p-2.5 flex flex-col items-center justify-center text-center overflow-hidden">
+        {customAnnualSummary ? (
+          typeof customAnnualSummary === 'function'
+            ? customAnnualSummary({ annualSummary, colorScheme, theme })
+            : customAnnualSummary
+        ) : (
+          <>
+            <div className="flex items-center space-x-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <span>年化收益率</span>
           {initialCapital != null && (
             <Poptip
               content={`初始金额 ${formatCapital(initialCapital)}`}
@@ -70,8 +79,10 @@ export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
             {formatPnL(totalPnL)}
           </span>
         </div>
-      </div>
-    </div>
+      </>
+    )}
+  </div>
+</div>
   );
 });
 

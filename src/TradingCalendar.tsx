@@ -18,6 +18,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   weeklySummaries,
   monthlySummaries = [],
   annualSummary,
+  customAnnualSummary,
   currency = '美元 (USD)',
   updateText = '每日实时更新',
   title = '实盘交易记录',
@@ -97,7 +98,10 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
             currentMonth={month}
             monthlySummaries={monthlySummaries}
           />
-          <AnnualSummaryCard annualSummary={annualSummary} />
+          <AnnualSummaryCard
+            annualSummary={annualSummary}
+            customAnnualSummary={customAnnualSummary}
+          />
         </div>
 
         <TradingCalendarFooter />

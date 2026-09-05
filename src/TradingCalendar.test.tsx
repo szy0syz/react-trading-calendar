@@ -129,4 +129,15 @@ describe('<TradingCalendar /> Root Component', () => {
     rerender(<TradingCalendar density="normal" />);
     expect(container.querySelector('.tc-calendar-root')).toBeInTheDocument();
   });
+
+  it('renders customAnnualSummary when passed to TradingCalendar', () => {
+    render(
+      <TradingCalendar
+        customAnnualSummary={<div data-testid="root-custom-stats">Root Custom Stats</div>}
+      />
+    );
+    expect(screen.getByTestId('root-custom-stats')).toBeInTheDocument();
+    expect(screen.getByText('Root Custom Stats')).toBeInTheDocument();
+    expect(screen.queryByText('年化收益率')).not.toBeInTheDocument();
+  });
 });
