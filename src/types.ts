@@ -131,8 +131,8 @@ export interface TradingCalendarProps {
  *    - 盈利系列：
  *      - PROFIT_PASSABLE: 翠绿呼吸外框与跑马微光
  *      - PROFIT_NICE: 翠绿外框与 ✦ 星芒粒子
- *      - PROFIT_GREAT: 翡翠能量外框与 🚀 火箭勋章
- *      - PROFIT_AWESOME: 翡翠双重流光与 👍 点赞勋章
+ *      - PROFIT_GREAT: 翡翠能量外框与 👍 点赞勋章
+ *      - PROFIT_AWESOME: 翡翠双重流光与 🚀 火箭勋章
  *      - PROFIT_INVINCIBLE: 香槟金流光与 👑 皇冠勋章
  *    - 亏损轻度微动效：
  *      - LOSS_BAD: 暗红微光外框与 🙁 沮丧勋章
@@ -147,9 +147,9 @@ export enum CellEffectLevel {
   PROFIT_PASSABLE = 'profit_passable',
   /** 2. 还不错 - Cell 级：轻盈上浮微跃动与金色微粒 (✦) */
   PROFIT_NICE = 'profit_nice',
-  /** 3. 棒 - Cell 级：能量流光环绕与火箭勋章 (🚀) */
+  /** 3. 棒 - Cell 级：能量流光环绕与点赞勋章 (👍) */
   PROFIT_GREAT = 'profit_great',
-  /** 4. 厉害 - Cell 级：双重翡翠流光与点赞勋章 (👍) */
+  /** 4. 厉害 - Cell 级：双重翡翠流光与火箭勋章 (🚀) */
   PROFIT_AWESOME = 'profit_awesome',
   /** 5. 无人能敌 - Cell 级：香槟金流光与皇冠勋章 (👑) */
   PROFIT_INVINCIBLE = 'profit_invincible',

@@ -40,13 +40,13 @@ describe('LocalCellEffects', () => {
     const { container: c2 } = render(<LocalCellEffects level={CellEffectLevel.PROFIT_NICE} />);
     expect(c2.textContent).toContain('✦');
 
-    // L3: 火箭 🚀
+    // L3: 点赞 👍
     const { container: c3 } = render(<LocalCellEffects level={CellEffectLevel.PROFIT_GREAT} />);
-    expect(c3.textContent).toContain('🚀');
+    expect(c3.textContent).toContain('👍');
 
-    // L4: 点赞 👍
+    // L4: 火箭 🚀
     const { container: c4 } = render(<LocalCellEffects level={CellEffectLevel.PROFIT_AWESOME} />);
-    expect(c4.textContent).toContain('👍');
+    expect(c4.textContent).toContain('🚀');
 
     // L5: 皇冠 👑
     const { container: c5 } = render(<LocalCellEffects level={CellEffectLevel.PROFIT_INVINCIBLE} />);
@@ -225,7 +225,7 @@ describe('TradingCalendar Integration with onCellHoverEffect', () => {
     vi.useRealTimers();
   });
 
-  it('renders purely local micro badge (👍) on profit hover without global disruption', () => {
+  it('renders purely local micro badge (🚀) on profit hover without global disruption', () => {
     const mockHoverEffect = vi.fn((day) => {
       if (day.pnl && day.pnl >= 50000) {
         return CellEffectLevel.PROFIT_AWESOME;
@@ -254,8 +254,8 @@ describe('TradingCalendar Integration with onCellHoverEffect', () => {
     fireEvent.mouseEnter(cell24!);
     expect(mockHoverEffect).toHaveBeenCalled();
 
-    // 盈利动效是纯 Cell 局部动效：无需等待 250ms 全局防抖，立即在本地渲染 👍 徽章
-    expect(cell24?.textContent).toContain('👍');
+    // 盈利动效是纯 Cell 局部动效：无需等待 250ms 全局防抖，立即在本地渲染 🚀 徽章
+    expect(cell24?.textContent).toContain('🚀');
 
     // 日历根节点不会携带任何阻碍全局阅读的 calendar-effect 属性
     const root = container.querySelector('.tc-calendar-root');
@@ -267,7 +267,7 @@ describe('TradingCalendar Integration with onCellHoverEffect', () => {
 
     // 鼠标移出后，本地动效平滑清理
     fireEvent.mouseLeave(cell24!);
-    expect(cell24?.textContent).not.toContain('👍');
+    expect(cell24?.textContent).not.toContain('🚀');
   });
 });
 

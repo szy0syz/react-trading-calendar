@@ -42,7 +42,7 @@ export const LocalCellEffects: React.FC<LocalCellEffectsProps> = ({ level }) => 
         </div>
       );
 
-    // 盈利 L3: 棒 - 能量流光环绕与火箭弹射徽章 (🚀)
+    // 盈利 L3: 棒 - 能量流光环绕与点赞弹射徽章 (👍)
     case CellEffectLevel.PROFIT_GREAT:
       return (
         <div className="absolute inset-0 pointer-events-none overflow-visible rounded-md z-20">
@@ -53,12 +53,12 @@ export const LocalCellEffects: React.FC<LocalCellEffectsProps> = ({ level }) => 
             transition={{ type: 'spring', stiffness: 450, damping: 15 }}
             className="absolute -top-3 -right-2.5 w-[26px] h-[26px] rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 text-[14px] shadow-md flex items-center justify-center leading-none border border-emerald-200/60 select-none"
           >
-            🚀
+            👍
           </motion.div>
         </div>
       );
 
-    // 盈利 L4: 厉害 - 翡翠双重流光与点赞弹射徽章 (👍)
+    // 盈利 L4: 厉害 - 翡翠双重流光与火箭弹射徽章 (🚀)
     case CellEffectLevel.PROFIT_AWESOME:
       return (
         <div className="absolute inset-0 pointer-events-none overflow-visible rounded-md z-20">
@@ -69,7 +69,7 @@ export const LocalCellEffects: React.FC<LocalCellEffectsProps> = ({ level }) => 
             transition={{ type: 'spring', stiffness: 450, damping: 14 }}
             className="absolute -top-3.5 -right-3 w-[28px] h-[28px] rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-400 text-[16px] shadow-lg flex items-center justify-center leading-none border border-emerald-200/80 shadow-emerald-500/25 select-none"
           >
-            👍
+            🚀
           </motion.div>
         </div>
       );

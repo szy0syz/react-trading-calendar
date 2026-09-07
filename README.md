@@ -129,8 +129,8 @@ interface AnnualSummary  {
 | :--- | :--- | :--- | :--- |
 | `PROFIT_PASSABLE` | 局部 Cell 级 | 翠绿外框呼吸微光 + 底部极细跑马光线 | 轻度盈利（如 0% ~ 10%） |
 | `PROFIT_NICE` | 局部 Cell 级 | 翠绿外框微光 + 单元格内浮现 3 颗香槟金升腾微粒 (✦) | 良好盈利（如 10% ~ 20%） |
-| `PROFIT_GREAT` | 局部 Cell 级 | 2px 翡翠高亮外框 + 右上角 26px 弹射勋章：🚀 **火箭勋章** | 显著盈利（如 20% ~ 50%） |
-| `PROFIT_AWESOME` | 局部 Cell 级 | 2px 翡翠流光外框 + 柔和底衬 + 右上角 28px 弹射勋章：👍 **点赞勋章** | 卓越盈利（如 50% ~ 100%） |
+| `PROFIT_GREAT` | 局部 Cell 级 | 2px 翡翠高亮外框 + 右上角 26px 弹射勋章：👍 **点赞勋章** | 显著盈利（如 20% ~ 50%） |
+| `PROFIT_AWESOME` | 局部 Cell 级 | 2px 翡翠流光外框 + 柔和底衬 + 右上角 28px 弹射勋章：🚀 **火箭勋章** | 卓越盈利（如 50% ~ 100%） |
 | `PROFIT_INVINCIBLE`| 局部 Cell 级 | 2px 香槟金外框 + 金色微暗影 + 右上角 32px 尊贵勋章：👑 **皇冠勋章** | 终极爆发盈利（如 ≥ 100%） |
 | `LOSS_BAD` | 局部 Cell 级 | 暗红微光外框 + 淡红半透明底衬 + 右上角 28px 弹射勋章：🙁 **沮丧勋章** | 轻度亏损（如 0% ~ -50%） |
 | `LOSS_TERRIBLE` | 全局 Calendar 级 | 全场下沉重击震颤 + 周边格倾斜灰化 + 目标格单圈红光放大 + ⚠️ **警报** | 严重亏损（如 -50% ~ -100%） |
@@ -168,8 +168,8 @@ export function MyTradingCalendar() {
 
     // --- 盈利系列 (纯局部微徽章自闭环，不干扰阅读) ---
     if (returnRate >= 100) return CellEffectLevel.PROFIT_INVINCIBLE; // 👑 皇冠勋章
-    if (returnRate >= 50)  return CellEffectLevel.PROFIT_AWESOME;    // 👍 点赞勋章
-    if (returnRate >= 20)  return CellEffectLevel.PROFIT_GREAT;      // 🚀 火箭勋章
+    if (returnRate >= 50)  return CellEffectLevel.PROFIT_AWESOME;    // 🚀 火箭勋章
+    if (returnRate >= 20)  return CellEffectLevel.PROFIT_GREAT;      // 👍 点赞勋章
     if (returnRate >= 10)  return CellEffectLevel.PROFIT_NICE;       // ✦ 星芒微粒
     if (returnRate > 0)    return CellEffectLevel.PROFIT_PASSABLE;   // 呼吸跑马微光
 

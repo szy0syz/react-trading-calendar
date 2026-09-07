@@ -137,9 +137,9 @@ export function App() {
     // --- 盈利系列 (Profit: 纯 Cell 局部微徽章自闭环，0 侵入其他数据) ---
     // 5. 无人能敌 (>=100%，即当日盈利 >= $100k) -> 👑 皇冠勋章
     if (returnRate >= 100) return CellEffectLevel.PROFIT_INVINCIBLE;
-    // 4. 厉害 (50% ~ <100%，即当日盈利 $50k ~ $100k) -> 👍 点赞勋章
+    // 4. 厉害 (50% ~ <100%，即当日盈利 $50k ~ $100k) -> 🚀 火箭勋章
     if (returnRate >= 50) return CellEffectLevel.PROFIT_AWESOME;
-    // 3. 棒 (20% ~ <50%，即当日盈利 $20k ~ $50k) -> 🚀 火箭勋章
+    // 3. 棒 (20% ~ <50%，即当日盈利 $20k ~ $50k) -> 👍 点赞勋章
     if (returnRate >= 20) return CellEffectLevel.PROFIT_GREAT;
     // 2. 还不错 (10% ~ <20%，即当日盈利 $10k ~ $20k) -> ✦ 星芒微粒
     if (returnRate >= 10) return CellEffectLevel.PROFIT_NICE;
@@ -203,10 +203,10 @@ export function App() {
             +$14,500 (还不错 · ✦ 星芒)
           </span>
           <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-            +$36,000 (棒 · 🚀 火箭徽章)
+            +$36,000 (棒 · 👍 点赞徽章)
           </span>
           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/50">
-            +$72,000 (厉害 · 👍 点赞徽章)
+            +$72,000 (厉害 · 🚀 火箭徽章)
           </span>
           <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50">
             +$115,000 (无人能敌 · 👑 皇冠徽章)
