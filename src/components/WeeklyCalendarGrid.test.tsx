@@ -114,6 +114,10 @@ describe('<WeeklyCalendarGrid />', () => {
 
     expect(screen.getByText('12 笔交易')).toBeInTheDocument();
     expect(screen.queryByText('0 笔交易')).not.toBeInTheDocument();
+
+    // Leaves cell - tooltip closes immediately
+    fireEvent.mouseLeave(cell);
+    expect(screen.queryByText('12 笔交易')).not.toBeInTheDocument();
   });
 
   it('renders review note glow badge when hasNote is true and hides when false/undefined', () => {

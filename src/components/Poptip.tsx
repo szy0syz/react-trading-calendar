@@ -21,6 +21,8 @@ export interface PoptipProps {
   className?: string;
   /** 禁用弹窗 */
   disabled?: boolean;
+  /** 是否允许鼠标与浮层交互（默认 false，悬停提示默认禁用交互以支持穿透且离开目标立即关闭） */
+  interactive?: boolean;
 }
 
 const placementConfig: Record<
@@ -54,6 +56,7 @@ export const Poptip: React.FC<PoptipProps> = ({
   widthClass = 'w-auto whitespace-nowrap',
   className = '',
   disabled = false,
+  interactive = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,9 +78,13 @@ export const Poptip: React.FC<PoptipProps> = ({
   const handleMouseLeave = () => {
     if (disabled || trigger !== 'hover') return;
     clearTimer();
-    timerRef.current = setTimeout(() => {
+    if (interactive) {
+      timerRef.current = setTimeout(() => {
+        setIsOpen(false);
+      }, 120);
+    } else {
       setIsOpen(false);
-    }, 120);
+    }
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -123,11 +130,12 @@ export const Poptip: React.FC<PoptipProps> = ({
         <div
           role="tooltip"
           className={cn(
-            'absolute z-50 pointer-events-auto transition-opacity duration-150',
+            'absolute z-50 transition-opacity duration-150',
+            interactive ? 'pointer-events-auto' : 'pointer-events-none select-none',
             config.container
           )}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={interactive ? handleMouseEnter : undefined}
+          onMouseLeave={interactive ? handleMouseLeave : undefined}
         >
           <div
             className={cn(
