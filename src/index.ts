@@ -14,6 +14,7 @@ export type {
   ColorScheme,
   Theme,
 } from './types';
+export { CellEffectLevel, isCalendarLevelEffect } from './types';
 export {
   formatPnL,
   formatPercent,
@@ -23,3 +24,5 @@ export {
   hasMonthData,
 } from './utils';
 export { useTradingCalendar } from './context/TradingCalendarContext';
+export { useTradingEffect } from './components/effects';
+

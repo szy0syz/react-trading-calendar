@@ -1,6 +1,6 @@
 {
   "name": "react-trading-calendar",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Pure presentational daily trading record calendar component in React with Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -65,6 +65,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.27.0",
+    "motion": "^13.2.0",
     "tailwind-merge": "^3.6.0"
   },
   "peerDependencies": {

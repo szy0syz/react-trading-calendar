@@ -28,6 +28,8 @@ export interface TradingCalendarContextValue {
   onMonthChange?: (year: number, month: number) => void;
   /** 主题切换回调 */
   onThemeToggle?: (theme: Theme) => void;
+  /** 单元格 Hover 动效解析回调 */
+  onCellHoverEffect?: (day: DailyRecord) => import('../types').CellEffectLevel | null | undefined;
 }
 
 // 默认値：确保在 Provider 外消费时也有合理 fallback

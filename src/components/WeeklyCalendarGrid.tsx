@@ -1,6 +1,7 @@
-import React from 'react';
-import { DailyRecord, WeeklySummary } from '../types';
+import React, { useRef, useState } from 'react';
+import { DailyRecord, WeeklySummary, CellEffectLevel, isCalendarLevelEffect } from '../types';
 import { useTradingCalendar } from '../context/TradingCalendarContext';
+import { useTradingEffect, LocalCellEffects } from './effects';
 import { useCalendarGrid } from '../hooks/useCalendarGrid';
 import { cn, formatPnL, formatDayLabel, getPnLBadgeStyle, getPnLTextStyle } from '../utils';
 import type { ColorScheme } from '../types';
@@ -30,15 +31,59 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
   const isClickable = Boolean(onDateClick) && day.pnl != null;
   const hasTrades = day.tradesCount != null && day.tradesCount > 0;
 
+  const { onCellHoverEffect } = useTradingCalendar();
+  const { activeGlobalEffect, requestGlobalEffect, cancelPendingIntent } = useTradingEffect();
+  const [localEffect, setLocalEffect] = useState<CellEffectLevel | null>(null);
+  const cellRef = useRef<HTMLDivElement>(null);
+
+  const isTarget = activeGlobalEffect?.targetDate === day.date;
+
+  const handleMouseEnter = () => {
+    if (!onCellHoverEffect || isNonTrading) return;
+    const effectLevel = onCellHoverEffect(day);
+    if (!effectLevel) return;
+
+    if (isCalendarLevelEffect(effectLevel)) {
+      const rootEl = cellRef.current?.closest('.tc-calendar-root');
+      if (cellRef.current && rootEl) {
+        const cellRect = cellRef.current.getBoundingClientRect();
+        const rootRect = rootEl.getBoundingClientRect();
+        requestGlobalEffect(day.date, effectLevel, {
+          x: cellRect.left - rootRect.left + cellRect.width / 2,
+          y: cellRect.top - rootRect.top + cellRect.height / 2,
+          width: cellRect.width,
+          height: cellRect.height,
+        });
+      }
+    } else {
+      setLocalEffect(effectLevel);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    cancelPendingIntent(day.date);
+    if (localEffect) {
+      setLocalEffect(null);
+    }
+  };
+
   const cellBody = (
     <div
+      ref={cellRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      data-date={day.date}
+      data-effect-target={isTarget ? 'true' : undefined}
       className={cn(
-        "flex flex-col items-center justify-center space-y-0.5 w-full h-full rounded-md transition-colors duration-150 select-none",
+        "tc-calendar-cell relative flex flex-col items-center justify-center space-y-0.5 w-full h-full rounded-md transition-colors duration-150 select-none",
         isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-1.5 sm:rounded-lg",
         isClickable ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50" : "cursor-default",
         isNonTrading && "bg-diagonal-stripes border border-slate-200/50 dark:border-slate-800/40 opacity-70"
       )}
     >
+      {/* 局部级微动效（纯 Cell 局部自闭环） */}
+      {localEffect && <LocalCellEffects level={localEffect} />}
+
       <div className="relative inline-flex items-center justify-center">
         <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 dark:text-slate-400">
           {formatDayLabel(day.date)}

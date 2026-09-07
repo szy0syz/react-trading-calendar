@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { TradingCalendar } from '../src/TradingCalendar';
-import { ColorScheme, DailyRecord, MonthlySummary, Theme, WeeklySummary } from '../src/types';
+import { ColorScheme, DailyRecord, MonthlySummary, Theme, WeeklySummary, CellEffectLevel } from '../src/types';
 
 const now = new Date();
 
@@ -15,12 +15,12 @@ function buildMockData(year: number, month: number): {
   const daysInMonth = new Date(year, month, 0).getDate();
   const dailyRecords: DailyRecord[] = [];
 
-  // 预设 PnL 种子，循环复用，模拟真实的涨跌节奏
+  // 预设 PnL 种子，覆盖 8 级动效的典型涨跌额度（+$8,650 ~ +$115,000，-$11,550 ~ -$120,000）
   const pnlSeed = [
-    -641, 10273, undefined, undefined, 11245,
-    3523, 5128, -4217, -4018, 8778,
-    15240, 4896, -3065, 4830, -5383,
-    8783, 11258, -2493, undefined, undefined,
+    8650, 14500, 36000, 72000, 115000,
+    -11550, -65000, -120000, 8778, 15240,
+    4896, -3065, 4830, -5383, 8783,
+    11258, -2493, undefined, undefined,
   ];
 
   // 预设交易笔数 mock 数据
@@ -118,10 +118,41 @@ export function App() {
     [year, month],
   );
 
+  const INITIAL_CAPITAL = 100_000;
+
   const mockAnnualSummary = {
     year,
     annualizedReturnRate: 0.3696,
     totalPnL: 376944,
+    initialCapital: INITIAL_CAPITAL,
+  };
+
+  // 业务方规则（Demo 演示）：按 100k 初始资金精确计算当天收益率（%）并映射至 8 级动效
+  const handleCellHoverEffect = (day: DailyRecord): CellEffectLevel | null => {
+    if (day.pnl == null || day.isNonTradingDay) return null;
+
+    // 当日盈亏占初始资金的百分比
+    const returnRate = (day.pnl / INITIAL_CAPITAL) * 100;
+
+    // --- 盈利系列 (Profit: 纯 Cell 局部微徽章自闭环，0 侵入其他数据) ---
+    // 5. 无人能敌 (>=100%，即当日盈利 >= $100k) -> 👑 皇冠勋章
+    if (returnRate >= 100) return CellEffectLevel.PROFIT_INVINCIBLE;
+    // 4. 厉害 (50% ~ <100%，即当日盈利 $50k ~ $100k) -> 👍 点赞勋章
+    if (returnRate >= 50) return CellEffectLevel.PROFIT_AWESOME;
+    // 3. 棒 (20% ~ <50%，即当日盈利 $20k ~ $50k) -> 🚀 火箭勋章
+    if (returnRate >= 20) return CellEffectLevel.PROFIT_GREAT;
+    // 2. 还不错 (10% ~ <20%，即当日盈利 $10k ~ $20k) -> ✦ 星芒微粒
+    if (returnRate >= 10) return CellEffectLevel.PROFIT_NICE;
+    // 1. 马虎马虎 (0% ~ <10%，即当日盈利 > $0 ~ < $10k) -> 翠绿呼吸微光
+    if (returnRate > 0) return CellEffectLevel.PROFIT_PASSABLE;
+
+    // --- 亏损系列 (Loss) ---
+    // 3. 烂透了 (< -100%，即当日亏损超过本金 <-$100k) -> 赛博故障熔断 + 裂纹 + 👎 熔断点踩
+    if (returnRate < -100) return CellEffectLevel.LOSS_ABYSMAL;
+    // 2. 太差劲了 (-50% ~ -100%，即当日亏损 -$50k ~ -$100k) -> 重力下沉 + 单圈光圈 + ⚠️ 警报
+    if (returnRate <= -50) return CellEffectLevel.LOSS_TERRIBLE;
+    // 1. 不好 (0% ~ -50%，即当日亏损 $0 ~ -$50k) -> 右上角 🙁 徽章
+    return CellEffectLevel.LOSS_BAD;
   };
 
   return (
@@ -132,32 +163,63 @@ export function App() {
       }`}
     >
       {/* 顶部 Playground 控制面板 */}
-      <div className="max-w-4xl mx-auto mb-8 p-4 bg-white border border-slate-200 text-slate-900 dark:bg-slate-900/80 dark:border-slate-800 dark:text-slate-100 rounded-xl shadow-lg flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">
-            TradingCalendar 组件在线 Playground
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            纯渲染组件演示 · 支持主题与红绿配色切换
-          </p>
+      <div className="max-w-4xl mx-auto mb-6 p-4 bg-white border border-slate-200 text-slate-900 dark:bg-slate-900/80 dark:border-slate-800 dark:text-slate-100 rounded-xl shadow-lg flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">
+              TradingCalendar 组件在线 Playground
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              支持 8 级动效（5 级盈利纯局部微徽章自闭环 + 3 级亏损）· 纯非侵入优雅体验
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-3 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors"
+            >
+              当前主题: {theme === 'dark' ? '🌙 黑夜 (Dark)' : '☀️ 白天 (Light)'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setColorScheme(cs => (cs === 'greenUpRedDown' ? 'redUpGreenDown' : 'greenUpRedDown'))}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors"
+            >
+              配色方案: {colorScheme === 'greenUpRedDown' ? '🟢 绿涨红跌 (美股)' : '🔴 红涨绿跌 (A股)'}
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center space-x-3 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => setTheme(t => (t === 'dark' ? 'light' : 'dark'))}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors"
-          >
-            当前主题: {theme === 'dark' ? '🌙 黑夜 (Dark)' : '☀️ 白天 (Light)'}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setColorScheme(cs => (cs === 'greenUpRedDown' ? 'redUpGreenDown' : 'greenUpRedDown'))}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 transition-colors"
-          >
-            配色方案: {colorScheme === 'greenUpRedDown' ? '🟢 绿涨红跌 (美股)' : '🔴 红涨绿跌 (A股)'}
-          </button>
+        {/* 动效快捷说明标签 */}
+        <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex flex-wrap gap-2 text-[11px] font-mono">
+          <span className="text-slate-400">悬停测试指南:</span>
+          <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            +$8,650 (马虎马虎 · 呼吸微光)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            +$14,500 (还不错 · ✦ 星芒)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            +$36,000 (棒 · 🚀 火箭徽章)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/50">
+            +$72,000 (厉害 · 👍 点赞徽章)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50">
+            +$115,000 (无人能敌 · 👑 皇冠徽章)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">
+            -$11,550 (不好 · 🙁 徽章)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold border border-rose-500/50">
+            -$65,000 (太差劲了 · ⚠️ 警报)
+          </span>
+          <span className="px-2 py-0.5 rounded bg-red-600/30 text-red-200 font-bold border border-red-500/60">
+            -$120,000 (烂透了 · 👎 熔断)
+          </span>
         </div>
       </div>
 
@@ -180,6 +242,7 @@ export function App() {
         colorScheme={colorScheme}
         theme={theme}
         showThemeToggle
+        onCellHoverEffect={handleCellHoverEffect}
         onMonthChange={(newYear, newMonth) => {
           setYear(newYear);
           setMonth(newMonth);

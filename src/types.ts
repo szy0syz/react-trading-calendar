@@ -115,4 +115,62 @@ export interface TradingCalendarProps {
   className?: string;
   /** 根容器自定义样式 */
   style?: React.CSSProperties;
+
+  /**
+   * 单元格悬停动效解析回调（可选）。
+   * 由调用方根据 day 数据自主判断返回 CellEffectLevel 或 null/undefined。
+   * Calendar 组件不侵入具体业务判断（如金额或百分比规则）。
+   */
+  onCellHoverEffect?: (day: DailyRecord) => CellEffectLevel | null | undefined;
+}
+
+/**
+ * 交易日历单元格动效级别枚举
+ *
+ * 1. 局部级 (Cell Level，纯单元格自闭环微动效，不干扰其他单元格，鼠标离开即平滑复原)：
+ *    - 盈利系列：
+ *      - PROFIT_PASSABLE: 翠绿呼吸外框与跑马微光
+ *      - PROFIT_NICE: 翠绿外框与 ✦ 星芒粒子
+ *      - PROFIT_GREAT: 翡翠能量外框与 🚀 火箭勋章
+ *      - PROFIT_AWESOME: 翡翠双重流光与 👍 点赞勋章
+ *      - PROFIT_INVINCIBLE: 香槟金流光与 👑 皇冠勋章
+ *    - 亏损轻度微动效：
+ *      - LOSS_BAD: 暗红微光外框与 🙁 沮丧勋章
+ *
+ * 2. 全局级 (Calendar Level，全日历宏观警报，由全局互斥锁保护)：
+ *    - LOSS_TERRIBLE: 重力下沉、全场倾斜灰化、单圈深红光圈放大与 ⚠️ 警报
+ *    - LOSS_ABYSMAL: 全息故障熔断、红色裂纹电光线与 👎 点踩徽章
+ */
+export enum CellEffectLevel {
+  // --- 盈利系列 (Profit: 纯 Cell 局部微徽章自闭环) ---
+  /** 1. 马虎马虎 - Cell 级：微澜呼吸光晕 */
+  PROFIT_PASSABLE = 'profit_passable',
+  /** 2. 还不错 - Cell 级：轻盈上浮微跃动与金色微粒 (✦) */
+  PROFIT_NICE = 'profit_nice',
+  /** 3. 棒 - Cell 级：能量流光环绕与火箭勋章 (🚀) */
+  PROFIT_GREAT = 'profit_great',
+  /** 4. 厉害 - Cell 级：双重翡翠流光与点赞勋章 (👍) */
+  PROFIT_AWESOME = 'profit_awesome',
+  /** 5. 无人能敌 - Cell 级：香槟金流光与皇冠勋章 (👑) */
+  PROFIT_INVINCIBLE = 'profit_invincible',
+
+  // --- 亏损系列 (Loss) ---
+  /** 1. 不好 - Cell 级：暗红微光外框与右上角沮丧勋章 (🙁) */
+  LOSS_BAD = 'loss_bad',
+  /** 2. 太差劲了 - Calendar 级：重力下沉震颤、单圈光圈与警报 (⚠️) */
+  LOSS_TERRIBLE = 'loss_terrible',
+  /** 3. 烂透了 - Calendar 级：全息熔断故障、红色裂纹与点踩徽章 (👎) */
+  LOSS_ABYSMAL = 'loss_abysmal',
+}
+
+/**
+ * 判断动效级别是否为全局 Calendar 级（需激活全局互斥锁与全场联动）
+ * 盈利系列已全部收敛为纯 Cell 级微交互，仅重度亏损保留全局警示。
+ */
+export function isCalendarLevelEffect(level?: CellEffectLevel | null): boolean {
+  if (!level) return false;
+  return (
+    level === CellEffectLevel.LOSS_TERRIBLE ||
+    level === CellEffectLevel.LOSS_ABYSMAL
+  );
 }
