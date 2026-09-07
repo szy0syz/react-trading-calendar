@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TradingCalendarProps, isCalendarLevelEffect } from './types';
 import { TradingCalendarProvider } from './context/TradingCalendarContext';
 import { TradingCalendarHeader } from './components/TradingCalendarHeader';
@@ -55,8 +55,8 @@ const TradingCalendarContent: React.FC<TradingCalendarContentProps> = ({
 }) => {
   const { activeGlobalEffect, completeGlobalEffect } = useTradingEffect();
 
-  // 空闲静默预拉取动效引擎 chunk（若本月存在可能触发全局动效的单元格）
-  useEffect(() => {
+  // 仅在用户鼠标/指针移入日历容器时才按需触发静默预加载动效引擎 chunk，避免在首屏挂载阶段抢占关键请求链 (Avoid chaining critical requests)
+  const handleCalendarPointerEnter = React.useCallback(() => {
     if (!onCellHoverEffect) return;
     const hasPotentialGlobalEffect = dailyRecords.some((record) => {
       const level = onCellHoverEffect(record);
@@ -78,6 +78,7 @@ const TradingCalendarContent: React.FC<TradingCalendarContentProps> = ({
           : "bg-white border-slate-200 text-slate-900",
         className
       )}
+      onPointerEnter={handleCalendarPointerEnter}
     >
       <TradingCalendarHeader />
 
