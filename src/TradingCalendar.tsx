@@ -135,6 +135,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   updateText = '每日实时更新',
   title = '实盘交易记录',
   statusText = '实时',
+  headerRight,
   sectionTitle = '交易记录',
   colorScheme = 'greenUpRedDown',
   theme = 'dark',
@@ -169,6 +170,7 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
       density={density}
       title={title}
       statusText={statusText}
+      headerRight={headerRight}
       currency={currency}
       updateText={updateText}
       sectionTitle={sectionTitle}

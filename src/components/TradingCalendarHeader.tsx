@@ -4,11 +4,11 @@ import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { cn } from '../utils';
 
 export const TradingCalendarHeader: React.FC = React.memo(() => {
-  const { title, statusText, theme, showThemeToggle, onThemeToggle } = useTradingCalendar();
+  const { title, statusText, headerRight, theme, showThemeToggle, onThemeToggle } = useTradingCalendar();
 
   return (
     <div className={cn(
-      "flex items-center justify-between px-2 sm:px-6 py-2 sm:py-3 border-b border-slate-200 dark:border-slate-800/80",
+      "relative z-20 flex items-center justify-between px-2 sm:px-6 py-2 sm:py-3 border-b border-slate-200 dark:border-slate-800/80",
       "bg-slate-50 dark:bg-[#16202f]"
     )}>
       <div className="flex items-center space-x-2 sm:space-x-3 truncate">
@@ -41,14 +41,20 @@ export const TradingCalendarHeader: React.FC = React.memo(() => {
           </button>
         )}
 
-        {/* 实时状态指示灯 */}
-        <div className="flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-semibold text-emerald-500 dark:text-emerald-400">
-          <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500" />
-          </span>
-          <span>{statusText}</span>
-        </div>
+        {headerRight !== undefined ? (
+          headerRight
+        ) : (
+          /* 实时状态指示灯 */
+          statusText && (
+            <div className="flex items-center space-x-1 sm:space-x-1.5 text-[11px] sm:text-xs font-semibold text-emerald-500 dark:text-emerald-400">
+              <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-2 sm:w-2 bg-emerald-500" />
+              </span>
+              <span>{statusText}</span>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

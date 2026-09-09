@@ -87,6 +87,11 @@ export interface TradingCalendarProps {
   title?: string;
   /** 状态指示文本，默认 "实时" */
   statusText?: string;
+  /**
+   * 自定义头部右上角内容（可选，支持 ReactNode）。
+   * 传入时将渲染在日历 Header 右侧（替代默认的 statusText 指示灯，或与主题切换按钮并列）。
+   */
+  headerRight?: React.ReactNode;
   /** 交易记录区域标题（Controls 区），默认 "交易记录" */
   sectionTitle?: string;
 

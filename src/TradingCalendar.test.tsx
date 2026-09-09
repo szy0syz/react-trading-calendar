@@ -140,4 +140,15 @@ describe('<TradingCalendar /> Root Component', () => {
     expect(screen.getByText('Root Custom Stats')).toBeInTheDocument();
     expect(screen.queryByText('年化收益率')).not.toBeInTheDocument();
   });
+
+  it('renders headerRight when passed to TradingCalendar and hides default status indicator', () => {
+    render(
+      <TradingCalendar
+        headerRight={<button data-testid="custom-header-slot">Switch Account</button>}
+      />
+    );
+    expect(screen.getByTestId('custom-header-slot')).toBeInTheDocument();
+    expect(screen.getByText('Switch Account')).toBeInTheDocument();
+    expect(screen.queryByText('实时')).not.toBeInTheDocument();
+  });
 });

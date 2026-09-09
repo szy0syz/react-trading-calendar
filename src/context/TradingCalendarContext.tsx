@@ -12,6 +12,8 @@ export interface TradingCalendarContextValue {
   title: string;
   /** 状态指示文本 */
   statusText: string;
+  /** 自定义头部右上角内容 */
+  headerRight?: React.ReactNode;
   /** 货币单位名称 */
   currency: string;
   /** 更新提示文案 */
