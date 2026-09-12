@@ -151,4 +151,60 @@ describe('<TradingCalendar /> Root Component', () => {
     expect(screen.getByText('Switch Account')).toBeInTheDocument();
     expect(screen.queryByText('实时')).not.toBeInTheDocument();
   });
+
+  describe('future month navigation disallowance', () => {
+    it('disables next month button when current view month is current system month or future', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(2026, 8, 12)); // 系统当前为 2026年9月12日
+
+      const onMonthChangeMock = vi.fn();
+      render(
+        <TradingCalendar
+          year={2026}
+          month={9}
+          monthlySummaries={[
+            { month: 8, pnl: 500 },
+            { month: 9, pnl: 300 },
+            { month: 10, pnl: 200 }, // 即使有未来月数据
+          ]}
+          onMonthChange={onMonthChangeMock}
+        />
+      );
+
+      const nextBtn = screen.getByLabelText('下个月');
+      expect(nextBtn).toBeDisabled();
+      expect(nextBtn.className).toContain('disabled:cursor-not-allowed');
+
+      fireEvent.click(nextBtn);
+      expect(onMonthChangeMock).not.toHaveBeenCalled();
+
+      vi.useRealTimers();
+    });
+
+    it('allows next month button in August to navigate to September when system date is in September', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(2026, 8, 12)); // 系统当前为 2026年9月12日
+
+      const onMonthChangeMock = vi.fn();
+      render(
+        <TradingCalendar
+          year={2026}
+          month={8}
+          monthlySummaries={[
+            { month: 8, pnl: 500 },
+            { month: 9, pnl: 300 },
+          ]}
+          onMonthChange={onMonthChangeMock}
+        />
+      );
+
+      const nextBtn = screen.getByLabelText('下个月');
+      expect(nextBtn).not.toBeDisabled();
+
+      fireEvent.click(nextBtn);
+      expect(onMonthChangeMock).toHaveBeenCalledWith(2026, 9);
+
+      vi.useRealTimers();
+    });
+  });
 });

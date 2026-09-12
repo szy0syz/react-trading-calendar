@@ -155,13 +155,22 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   const nextYear = month === 12 ? year + 1 : year;
   const nextMonth = month === 12 ? 1 : month + 1;
 
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  // 处于当前月（当前月尚未过完）或未来月份时，禁止切换至下月
+  const isCurrentOrFuture =
+    year > currentYear || (year === currentYear && month >= currentMonth);
+
   const computedHasPrevMonth =
     hasPrevMonth ??
     hasMonthData(prevYear, prevMonth, dailyRecords, monthlySummaries, year);
 
   const computedHasNextMonth =
-    hasNextMonth ??
-    hasMonthData(nextYear, nextMonth, dailyRecords, monthlySummaries, year);
+    !isCurrentOrFuture &&
+    (hasNextMonth ??
+      hasMonthData(nextYear, nextMonth, dailyRecords, monthlySummaries, year));
 
   return (
     <TradingCalendarProvider
