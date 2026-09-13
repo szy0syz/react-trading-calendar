@@ -269,6 +269,43 @@ describe('TradingCalendar Integration with onCellHoverEffect', () => {
     fireEvent.mouseLeave(cell24!);
     expect(cell24?.textContent).not.toContain('🚀');
   });
+
+  it('sets data-calendar-effect on root and retains solid background classes during LOSS_TERRIBLE / LOSS_ABYSMAL', () => {
+    const mockHoverEffect = vi.fn((day) => {
+      if (day.pnl && day.pnl <= -10000) {
+        return CellEffectLevel.LOSS_ABYSMAL;
+      }
+      return null;
+    });
+
+    const records = [
+      { date: '2026-08-26', pnl: -12000, tradesCount: 3 },
+      { date: '2026-08-27', pnl: 200, tradesCount: 1 },
+    ];
+
+    const { container } = render(
+      <TradingCalendar
+        year={2026}
+        month={8}
+        dailyRecords={records}
+        theme="dark"
+        onCellHoverEffect={mockHoverEffect}
+      />
+    );
+
+    const cell26 = container.querySelector('[data-date="2026-08-26"]');
+    expect(cell26).toBeInTheDocument();
+
+    fireEvent.mouseEnter(cell26!);
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+
+    const root = container.querySelector('.tc-calendar-root');
+    expect(root).toHaveAttribute('data-calendar-effect', CellEffectLevel.LOSS_ABYSMAL);
+    // 确保暗黑模式下仍具有完全不透明的背景色样式类，不透出底层页面元素
+    expect(root?.className).toContain('bg-[#0b1322]');
+  });
 });
 
 describe('CalendarStageEffects Loss Animations', () => {
@@ -285,16 +322,17 @@ describe('CalendarStageEffects Loss Animations', () => {
       />
     );
 
-    // 含有 ⚠️ 警报
+    // 含有 ⚠️ 警报，不含 👎 与 🩸
     expect(container.textContent).toContain('⚠️');
     expect(container.textContent).not.toContain('👎');
+    expect(container.textContent).not.toContain('🩸');
 
     // 仅有一圈光圈脉冲框（border-rose-600）
     const rings = container.querySelectorAll('.border-rose-600');
     expect(rings.length).toBe(1);
   });
 
-  it('renders LOSS_ABYSMAL with thumbs-down emoji 👎 and cyber crack svg', () => {
+  it('renders LOSS_ABYSMAL with thumbs-down emoji 👎, dripping blood 🩸, and cyber crack svg', () => {
     const onComplete = vi.fn();
     const { container } = render(
       <CalendarStageEffects
@@ -307,8 +345,9 @@ describe('CalendarStageEffects Loss Animations', () => {
       />
     );
 
-    // 含有 👎 熔断点踩，不含 ⚠️
+    // 含有 👎 熔断点踩与血滴 🩸，不含 ⚠️
     expect(container.textContent).toContain('👎');
+    expect(container.textContent).toContain('🩸');
     expect(container.textContent).not.toContain('⚠️');
 
     // 含有故障裂纹 SVG

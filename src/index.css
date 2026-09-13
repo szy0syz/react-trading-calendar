@@ -44,6 +44,13 @@
 /* 独立根类名隔离与基础设置 */
 .tc-calendar-root {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  isolation: isolate;
+  background-color: #ffffff;
+}
+
+.tc-calendar-root[data-theme="dark"],
+.dark .tc-calendar-root {
+  background-color: #0b1322;
 }
 
 /* 单元格硬件加速基类 */
@@ -55,6 +62,12 @@
 /* =========================================================================
    全局 Calendar 级动效 CSS 规则（GPU 合成层驱动，仅限重度亏损宏观警示）
    ========================================================================= */
+
+/* 全局 Calendar 级动效激活时：保持日历根容器完全不透明 */
+[data-calendar-effect="loss_terrible"],
+[data-calendar-effect="loss_abysmal"] {
+  opacity: 1 !important;
+}
 
 /* --- 亏损 L2: 太差劲了 (LOSS_TERRIBLE) - 重力下沉与倾斜灰化 --- */
 @keyframes tc-thud-shake {
@@ -71,9 +84,10 @@
 }
 
 [data-calendar-effect="loss_terrible"] .tc-calendar-cell:not([data-effect-target="true"]) {
-  transform: translateY(4px) rotate(-1.5deg);
-  opacity: 0.35;
-  filter: grayscale(0.6);
+  transform: translateY(3px) rotate(-1deg);
+  opacity: 0.7;
+  filter: grayscale(0.5);
+  transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
 }
 
 [data-calendar-effect="loss_terrible"] .tc-calendar-cell[data-effect-target="true"] {
@@ -84,12 +98,12 @@
 
 /* --- 亏损 L3: 烂透了 (LOSS_ABYSMAL) - 故障熔断与单色灰度 --- */
 @keyframes tc-glitch-flicker {
-  0% { opacity: 1; }
-  15% { opacity: 0.45; transform: translate(-2px, 1px); }
-  30% { opacity: 1; transform: translate(2px, -1px); }
-  45% { opacity: 0.6; }
-  60% { opacity: 1; transform: translate(-1px, 0); }
-  100% { opacity: 1; transform: translate(0, 0); }
+  0% { transform: translate(0, 0); filter: grayscale(0.7) brightness(1); }
+  15% { transform: translate(-2px, 1px); filter: grayscale(0.7) brightness(0.88); }
+  30% { transform: translate(2px, -1px); filter: grayscale(0.7) brightness(1.12); }
+  45% { transform: translate(-1px, 1px); filter: grayscale(0.7) brightness(0.92); }
+  60% { transform: translate(1px, -1px); filter: grayscale(0.7) brightness(1.06); }
+  100% { transform: translate(0, 0); filter: grayscale(0.7) brightness(1); }
 }
 
 [data-calendar-effect="loss_abysmal"] {
@@ -98,8 +112,12 @@
   transition: filter 0.8s ease;
 }
 
+[data-calendar-effect="loss_abysmal"] .tc-calendar-cell:not([data-effect-target="true"]) {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
 [data-calendar-effect="loss_abysmal"] .tc-calendar-cell[data-effect-target="true"] {
-  filter: grayscale(0) !important;
   transform: scale(1.06);
   z-index: 25;
   box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);

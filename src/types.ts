@@ -144,7 +144,7 @@ export interface TradingCalendarProps {
  *
  * 2. 全局级 (Calendar Level，全日历宏观警报，由全局互斥锁保护)：
  *    - LOSS_TERRIBLE: 重力下沉、全场倾斜灰化、单圈深红光圈放大与 ⚠️ 警报
- *    - LOSS_ABYSMAL: 全息故障熔断、红色裂纹电光线与 👎 点踩徽章
+ *    - LOSS_ABYSMAL: 全息故障熔断、红色裂纹电光线、🩸 滴血与 👎 熔断徽章
  */
 export enum CellEffectLevel {
   // --- 盈利系列 (Profit: 纯 Cell 局部微徽章自闭环) ---

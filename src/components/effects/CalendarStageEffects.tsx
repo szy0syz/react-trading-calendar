@@ -18,7 +18,7 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
   useEffect(() => {
     let duration = 1800;
     if (level === CellEffectLevel.LOSS_TERRIBLE) duration = 1600;
-    if (level === CellEffectLevel.LOSS_ABYSMAL) duration = 2000;
+    if (level === CellEffectLevel.LOSS_ABYSMAL) duration = 2200;
 
     const timer = setTimeout(() => {
       onComplete();
@@ -51,26 +51,6 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
               className="absolute -translate-x-1/2 -translate-y-1/2 rounded-lg border-2 border-rose-600 shadow-[0_0_20px_rgba(225,29,72,0.6)] pointer-events-none"
             />
 
-            {/* 灰烬与泪滴微粒向下飘落 */}
-            {[-18, -6, 6, 18].map((offset, idx) => (
-              <motion.div
-                key={idx}
-                initial={{
-                  x: targetRect.x + offset,
-                  y: targetRect.y,
-                  opacity: 0.8,
-                  scale: 1,
-                }}
-                animate={{
-                  y: targetRect.y + 50 + idx * 8,
-                  opacity: [0.8, 0],
-                  scale: [1, 0.4],
-                }}
-                transition={{ duration: 0.9, delay: 0.1 * idx, ease: 'easeIn' }}
-                className="absolute w-1.5 h-1.5 rounded-full bg-rose-500/80 shadow-[0_0_6px_rgba(244,63,94,0.8)] pointer-events-none"
-              />
-            ))}
-
             {/* 警报三角叹号 ⚠️ */}
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
@@ -85,7 +65,7 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
         )}
 
         {/* ================================================================= */}
-        {/* 亏损 L3: 烂透了 (LOSS_ABYSMAL) - 赛博熔断闪烁 + 碎裂电光线 + 👎 */}
+        {/* 亏损 L3: 烂透了 (LOSS_ABYSMAL) - 赛博熔断闪烁 + 碎裂电光线 + 🩸 滴血 + 👎 */}
         {/* ================================================================= */}
         {level === CellEffectLevel.LOSS_ABYSMAL && (
           <React.Fragment key="loss_abysmal">
@@ -127,6 +107,32 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
                 transition={{ duration: 0.9, delay: 0.1, ease: 'easeOut' }}
               />
             </svg>
+
+            {/* 熔断血滴 🩸 沿碎裂缝隙滴落 */}
+            {[-18, -6, 6, 18].map((offset, idx) => (
+              <motion.span
+                key={idx}
+                initial={{
+                  x: targetRect.x + offset,
+                  y: targetRect.y + 8,
+                  opacity: 0,
+                  scale: 0.6,
+                }}
+                animate={{
+                  y: targetRect.y + 54 + (idx % 2) * 10,
+                  opacity: [0, 0.95, 0.85, 0],
+                  scale: [0.6, 1.15, 1, 0.75],
+                }}
+                transition={{
+                  duration: 1.5,
+                  delay: 0.15 * idx,
+                  ease: [0.35, 0, 0.25, 1],
+                }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-sm sm:text-base select-none pointer-events-none filter drop-shadow-[0_2px_5px_rgba(239,68,68,0.6)] z-40"
+              >
+                🩸
+              </motion.span>
+            ))}
 
             {/* 点踩/熔断徽章 👎 */}
             <motion.div
