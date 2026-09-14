@@ -66,7 +66,7 @@ export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
           </span>
         </div>
 
-        <div className="flex flex-col items-center mt-3">
+        <div className="flex flex-col items-center mt-2 sm:mt-2.5">
           <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0">
             今年收益
           </span>

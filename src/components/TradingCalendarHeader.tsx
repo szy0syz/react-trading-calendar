@@ -8,7 +8,7 @@ export const TradingCalendarHeader: React.FC = React.memo(() => {
 
   return (
     <div className={cn(
-      "relative z-20 flex items-center justify-between px-2 sm:px-6 py-2 sm:py-3 border-b border-slate-200 dark:border-slate-800/80",
+      "relative z-20 flex items-center justify-between px-2 sm:px-6 py-1.5 sm:py-2 border-b border-slate-200 dark:border-slate-800/80",
       "bg-slate-50 dark:bg-[#16202f]"
     )}>
       <div className="flex items-center space-x-2 sm:space-x-3 truncate">

@@ -96,7 +96,7 @@ const TradingCalendarContent: React.FC<TradingCalendarContentProps> = ({
         weeklySummaries={weeklySummaries}
       />
 
-      <div className="px-2 sm:px-6 pb-4 sm:pb-6 flex flex-col sm:flex-row gap-3.5 items-stretch">
+      <div className="px-2 sm:px-6 pb-2.5 sm:pb-3.5 flex flex-col sm:flex-row gap-3.5 items-stretch">
         <MonthlyPnLGrid
           year={year}
           currentMonth={month}

@@ -156,7 +156,7 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
   const isCompact = density === 'compact';
 
   return (
-    <div className="px-2 sm:px-6 pb-2 sm:pb-3 w-full overflow-visible">
+    <div className="px-2 sm:px-6 pb-1.5 sm:pb-2 w-full overflow-visible">
       <table className="w-full table-fixed border-collapse text-left">
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
