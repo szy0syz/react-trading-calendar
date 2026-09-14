@@ -91,6 +91,7 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
         {day.hasNote && (
           <span
             data-testid="review-note-badge"
+            role="img"
             aria-label="有复盘笔记"
             title="有复盘笔记"
             className="absolute -right-2 top-0.5 pointer-events-none block h-1 w-1 rounded-full bg-cyan-400/90 dark:bg-cyan-300/90 shadow-[0_0_4px_rgba(34,211,238,0.6)]"

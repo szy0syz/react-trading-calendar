@@ -140,6 +140,7 @@ describe('<WeeklyCalendarGrid />', () => {
     const badges = screen.getAllByTestId('review-note-badge');
     expect(badges.length).toBe(1);
     expect(badges[0]).toBeInTheDocument();
+    expect(badges[0]).toHaveAttribute('role', 'img');
     expect(badges[0]).toHaveAttribute('aria-label', '有复盘笔记');
   });
 });
