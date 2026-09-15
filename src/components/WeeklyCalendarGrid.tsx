@@ -161,12 +161,12 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
             <th className={cn("hidden md:table-cell px-1 font-normal w-12 sm:w-20 text-slate-400", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")} />
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周一</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周二</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周三</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周四</th>
-            <th className={cn("text-center w-[16%] sm:w-[15%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周五</th>
-            <th className={cn("text-center w-[20%] sm:w-[18%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>
+            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周一</th>
+            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周二</th>
+            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周三</th>
+            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周四</th>
+            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周五</th>
+            <th className={cn("text-center w-[14%] sm:w-[12%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>
               <span className="sm:hidden">周汇总</span>
               <span className="hidden sm:inline">周度盈亏</span>
             </th>
