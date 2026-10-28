@@ -26,11 +26,15 @@ export interface TradingCalendarContextValue {
   showThemeToggle: boolean;
   /** 点击具体日期单元格回调 */
   onDateClick?: (record: DailyRecord) => void;
+  /** 鼠标悬停进入具体日期单元格回调 */
+  onDateHover?: (record: DailyRecord) => void;
+  /** 鼠标移出具体日期单元格回调 */
+  onDateHoverEnd?: (record: DailyRecord) => void;
   /** 月份切换回调 */
   onMonthChange?: (year: number, month: number) => void;
   /** 主题切换回调 */
   onThemeToggle?: (theme: Theme) => void;
-  /** 单元格 Hover 动效解析回调 */
+  /** 单元格 Hover 动效解析纯函数 */
   onCellHoverEffect?: (day: DailyRecord) => import('../types').CellEffectLevel | null | undefined;
 }
 

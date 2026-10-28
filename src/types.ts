@@ -111,6 +111,10 @@ export interface TradingCalendarProps {
   onMonthChange?: (year: number, month: number) => void;
   /** 点击具体日期单元格回调 */
   onDateClick?: (record: DailyRecord) => void;
+  /** 鼠标悬停进入具体日期单元格回调（用于外部数据预取、轻量交互等副作用） */
+  onDateHover?: (record: DailyRecord) => void;
+  /** 鼠标移出具体日期单元格回调（可选） */
+  onDateHoverEnd?: (record: DailyRecord) => void;
   /** 主题切换回调 */
   onThemeToggle?: (theme: Theme) => void;
 
@@ -122,9 +126,9 @@ export interface TradingCalendarProps {
   style?: React.CSSProperties;
 
   /**
-   * 单元格悬停动效解析回调（可选）。
+   * 单元格悬停动效解析纯函数（可选）。
    * 由调用方根据 day 数据自主判断返回 CellEffectLevel 或 null/undefined。
-   * Calendar 组件不侵入具体业务判断（如金额或百分比规则）。
+   * 注意：此函数必须是纯函数（Pure Function），不可包含任何网络请求或状态修改等副作用。
    */
   onCellHoverEffect?: (day: DailyRecord) => CellEffectLevel | null | undefined;
 }

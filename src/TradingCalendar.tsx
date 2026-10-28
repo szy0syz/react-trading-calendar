@@ -145,6 +145,8 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   hasNextMonth,
   onMonthChange,
   onDateClick,
+  onDateHover,
+  onDateHoverEnd,
   onThemeToggle,
   onCellHoverEffect,
   className,
@@ -185,6 +187,8 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
       sectionTitle={sectionTitle}
       showThemeToggle={showThemeToggle}
       onDateClick={onDateClick}
+      onDateHover={onDateHover}
+      onDateHoverEnd={onDateHoverEnd}
       onMonthChange={onMonthChange}
       onThemeToggle={onThemeToggle}
       onCellHoverEffect={onCellHoverEffect}

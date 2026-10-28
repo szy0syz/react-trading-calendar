@@ -91,6 +91,70 @@ describe('<WeeklyCalendarGrid />', () => {
     }
   });
 
+  it('triggers onDateHover and onDateHoverEnd when hovering over a trading day cell', () => {
+    const onDateHoverMock = vi.fn();
+    const onDateHoverEndMock = vi.fn();
+
+    const { container } = render(
+      <TradingCalendarProvider
+        {...buildContext({
+          onDateHover: onDateHoverMock,
+          onDateHoverEnd: onDateHoverEndMock,
+        })}
+      >
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={mockDailyRecords}
+        />
+      </TradingCalendarProvider>
+    );
+
+    const cellDiv = container.querySelector('[data-date="2026-07-07"]');
+    expect(cellDiv).not.toBeNull();
+
+    if (cellDiv) {
+      fireEvent.mouseEnter(cellDiv);
+      expect(onDateHoverMock).toHaveBeenCalledTimes(1);
+      expect(onDateHoverMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          date: '2026-07-07',
+          pnl: 11245,
+        })
+      );
+
+      fireEvent.mouseLeave(cellDiv);
+      expect(onDateHoverEndMock).toHaveBeenCalledTimes(1);
+      expect(onDateHoverEndMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          date: '2026-07-07',
+          pnl: 11245,
+        })
+      );
+    }
+  });
+
+  it('does not trigger onDateHover on non-trading days', () => {
+    const onDateHoverMock = vi.fn();
+    const { container } = render(
+      <TradingCalendarProvider {...buildContext({ onDateHover: onDateHoverMock })}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={7}
+          dailyRecords={mockDailyRecords}
+        />
+      </TradingCalendarProvider>
+    );
+
+    const nonTradingCell = container.querySelector('.bg-diagonal-stripes');
+    expect(nonTradingCell).not.toBeNull();
+
+    if (nonTradingCell) {
+      fireEvent.mouseEnter(nonTradingCell);
+      expect(onDateHoverMock).not.toHaveBeenCalled();
+    }
+  });
+
   it('renders trade count tooltip only when tradesCount is a positive number', () => {
     const recordsWithTrades: DailyRecord[] = [
       { date: '2026-07-06', pnl: -641, tradesCount: 0 },

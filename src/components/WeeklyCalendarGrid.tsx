@@ -31,7 +31,7 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
   const isClickable = Boolean(onDateClick) && day.pnl != null;
   const hasTrades = day.tradesCount != null && day.tradesCount > 0;
 
-  const { onCellHoverEffect } = useTradingCalendar();
+  const { onCellHoverEffect, onDateHover, onDateHoverEnd } = useTradingCalendar();
   const { activeGlobalEffect, requestGlobalEffect, cancelPendingIntent } = useTradingEffect();
   const [localEffect, setLocalEffect] = useState<CellEffectLevel | null>(null);
   const cellRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,10 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
   const isTarget = activeGlobalEffect?.targetDate === day.date;
 
   const handleMouseEnter = () => {
-    if (!onCellHoverEffect || isNonTrading) return;
+    if (isNonTrading) return;
+    onDateHover?.(day);
+
+    if (!onCellHoverEffect) return;
     const effectLevel = onCellHoverEffect(day);
     if (!effectLevel) return;
 
@@ -61,6 +64,9 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
   };
 
   const handleMouseLeave = () => {
+    if (!isNonTrading) {
+      onDateHoverEnd?.(day);
+    }
     cancelPendingIntent(day.date);
     if (localEffect) {
       setLocalEffect(null);
