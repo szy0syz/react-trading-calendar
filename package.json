@@ -1,6 +1,6 @@
 {
   "name": "react-trading-calendar",
-  "version": "1.9.13",
+  "version": "1.9.14",
   "description": "Pure presentational daily trading record calendar component in React with Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,7 +29,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm test && pnpm typecheck && pnpm build",
+    "release": "pnpm publish --no-git-checks && git tag -fa v$npm_package_version -m \"v$npm_package_version\" && git push origin HEAD --tags",
+    "release:patch": "npm version patch -m \"chore(release): v%s\" && git push origin HEAD --follow-tags && pnpm publish",
+    "release:minor": "npm version minor -m \"chore(release): v%s\" && git push origin HEAD --follow-tags && pnpm publish"
   },
   "repository": {
     "type": "git",

@@ -87,7 +87,7 @@ describe('useCalendarGrid pure functions', () => {
       const record: DailyRecord = { date: '2026-07-07', pnl: 500 };
       const map = buildRecordMap([record]);
       const rows = buildWeekRows(2026, 7, map);
-      const allDays = rows.flatMap((r) => r.days).filter(Boolean) as DailyRecord[];
+      const allDays = rows.flatMap((r) => r.days);
       const matched = allDays.find((d) => d.pnl === 500);
       expect(matched).toBeDefined();
     });

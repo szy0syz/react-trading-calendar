@@ -72,12 +72,63 @@ export function getPnLBadgeStyle(
   return cn(base, COLOR_SCHEME_TOKENS[colorScheme][sentiment].badge);
 }
 
-// 日期格式工具（下面两个函数是外部对日期处理的唯一入口）
+// 日期格式与日历推算工具（外部及内部对日期处理的统一纯函数入口）
+
+export interface ParsedDateParts {
+  year?: number;
+  month: number;
+  day: number;
+}
+
+/**
+ * 统一解析 YYYY-MM-DD 或 MM/DD 日期字符串
+ */
+export function parseDateParts(date: string): ParsedDateParts | null {
+  if (!date) return null;
+  const s = date.trim();
+  if (s.length === 10 && s[4] === '-' && s[7] === '-') {
+    const year = Number(s.slice(0, 4));
+    const month = Number(s.slice(5, 7));
+    const day = Number(s.slice(8, 10));
+    if (!Number.isNaN(year) && !Number.isNaN(month) && !Number.isNaN(day)) {
+      return { year, month, day };
+    }
+    return null;
+  }
+  if (s.includes('/')) {
+    const [mStr, dStr] = s.split('/');
+    const month = Number(mStr);
+    const day = Number(dStr);
+    if (!Number.isNaN(month) && !Number.isNaN(day)) {
+      return { month, day };
+    }
+  }
+  return null;
+}
+
+/**
+ * 推算上个月 (-1) 或下个月 (+1) 的年份与月份
+ */
+export function shiftYearMonth(
+  year: number,
+  month: number,
+  delta: -1 | 1,
+): { year: number; month: number } {
+  if (delta === -1) {
+    return {
+      year: month === 1 ? year - 1 : year,
+      month: month === 1 ? 12 : month - 1,
+    };
+  }
+  return {
+    year: month === 12 ? year + 1 : year,
+    month: month === 12 ? 1 : month + 1,
+  };
+}
 
 /**
  * 将 YYYY-MM-DD 格式日期规范化为 MM/DD（用于 Map 索引 key 统一）。
  * 已是 MM/DD 格式的字符串原样返回。
- * 这是日期格式处理的唯一入口，避免"魔法"散落各处。
  */
 export function normalizeDateKey(date: string): string {
   if (date.length === 10 && date[4] === '-' && date[7] === '-') {
@@ -96,6 +147,22 @@ export function formatDayLabel(date: string): string {
 }
 
 /**
+ * 判断日期字符串是否属于当前视图月份（支持 YYYY-MM-DD 和 MM/DD 格式）
+ */
+export function isCurrentMonthDate(
+  date: string,
+  month: number,
+  year?: number,
+): boolean {
+  const parts = parseDateParts(date);
+  if (!parts) return false;
+  if (parts.year !== undefined && year !== undefined) {
+    return parts.year === year && parts.month === month;
+  }
+  return parts.month === month;
+}
+
+/**
  * 检查指定年份和月份是否有交易记录或月度总结数据
  */
 export function hasMonthData(
@@ -103,36 +170,19 @@ export function hasMonthData(
   targetMonth: number,
   dailyRecords: DailyRecord[] = [],
   monthlySummaries: MonthlySummary[] = [],
-  currentYear: number = targetYear
+  currentYear: number = targetYear,
 ): boolean {
-  // 1. 检查 monthlySummaries 中是否有该月份的有效 PnL 数据
   const hasInMonthly = monthlySummaries.some(
-    (s) => s.month === targetMonth && s.pnl != null
+    (s) => s.month === targetMonth && s.pnl != null,
   );
   if (hasInMonthly) return true;
 
-  // 2. 检查 dailyRecords 中是否有属于 targetYear 和 targetMonth 的记录
-  const hasInDaily = dailyRecords.some((record) => {
-    if (!record || !record.date) return false;
-    const dateStr = record.date.trim();
-
-    // 格式: YYYY-MM-DD
-    if (dateStr.length === 10 && dateStr[4] === '-' && dateStr[7] === '-') {
-      const y = parseInt(dateStr.slice(0, 4), 10);
-      const m = parseInt(dateStr.slice(5, 7), 10);
-      return y === targetYear && m === targetMonth;
-    }
-
-    // 格式: MM/DD
-    if (dateStr.includes('/')) {
-      const parts = dateStr.split('/');
-      const m = parseInt(parts[0], 10);
-      return m === targetMonth && targetYear === currentYear;
-    }
-
-    return false;
+  return dailyRecords.some((record) => {
+    if (!record?.date) return false;
+    const parts = parseDateParts(record.date);
+    if (!parts) return false;
+    const recordYear = parts.year ?? currentYear;
+    return recordYear === targetYear && parts.month === targetMonth;
   });
-
-  return hasInDaily;
 }
 

@@ -63,19 +63,68 @@ interface TradingCalendarProviderProps extends Partial<TradingCalendarContextVal
 
 export const TradingCalendarProvider: React.FC<TradingCalendarProviderProps> = ({
   children,
-  density = 'compact',
-  ...value
-}) => (
-  <TradingCalendarContext.Provider
-    value={{
-      ...defaultContextValue,
-      ...value,
+  colorScheme = defaultContextValue.colorScheme,
+  theme = defaultContextValue.theme,
+  title = defaultContextValue.title,
+  statusText = defaultContextValue.statusText,
+  headerRight,
+  currency = defaultContextValue.currency,
+  updateText = defaultContextValue.updateText,
+  sectionTitle = defaultContextValue.sectionTitle,
+  density = defaultContextValue.density,
+  showThemeToggle = defaultContextValue.showThemeToggle,
+  onDateClick,
+  onDateHover,
+  onDateHoverEnd,
+  onMonthChange,
+  onThemeToggle,
+  onCellHoverEffect,
+}) => {
+  const contextValue = React.useMemo<TradingCalendarContextValue>(
+    () => ({
+      colorScheme,
+      theme,
+      title,
+      statusText,
+      headerRight,
+      currency,
+      updateText,
+      sectionTitle,
       density,
-    }}
-  >
-    {children}
-  </TradingCalendarContext.Provider>
-);
+      showThemeToggle,
+      onDateClick,
+      onDateHover,
+      onDateHoverEnd,
+      onMonthChange,
+      onThemeToggle,
+      onCellHoverEffect,
+    }),
+    [
+      colorScheme,
+      theme,
+      title,
+      statusText,
+      headerRight,
+      currency,
+      updateText,
+      sectionTitle,
+      density,
+      showThemeToggle,
+      onDateClick,
+      onDateHover,
+      onDateHoverEnd,
+      onMonthChange,
+      onThemeToggle,
+      onCellHoverEffect,
+    ],
+  );
+
+  return (
+    <TradingCalendarContext.Provider value={contextValue}>
+      {children}
+    </TradingCalendarContext.Provider>
+  );
+};
 
 // 消费 Hook
 

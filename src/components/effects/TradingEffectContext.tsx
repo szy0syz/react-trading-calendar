@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { CellEffectLevel, isCalendarLevelEffect } from '../../types';
 import { GlobalEffectPayload, TargetRect, TradingEffectContextValue } from './types';
+
+const EFFECT_INTENT_DEBOUNCE_MS = 250;
+const GLOBAL_EFFECT_SAFETY_TIMEOUT_MS = 3500;
 
 const defaultContext: TradingEffectContextValue = {
   activeGlobalEffect: null,
@@ -20,6 +23,8 @@ export const TradingEffectProvider: React.FC<TradingEffectProviderProps> = ({ ch
   const [activeGlobalEffect, setActiveGlobalEffect] = useState<GlobalEffectPayload | null>(null);
   const [isGlobalLocked, setIsGlobalLocked] = useState<boolean>(false);
 
+  // 同步互斥锁 Ref，避免在 setState updater 纯函数中执行副作用
+  const isLockedRef = useRef<boolean>(false);
   // 防抖计时器引用
   const pendingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingDateRef = useRef<string | null>(null);
@@ -27,6 +32,7 @@ export const TradingEffectProvider: React.FC<TradingEffectProviderProps> = ({ ch
   const safetyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const completeGlobalEffect = useCallback(() => {
+    isLockedRef.current = false;
     setActiveGlobalEffect(null);
     setIsGlobalLocked(false);
     if (safetyTimeoutRef.current) {
@@ -49,7 +55,7 @@ export const TradingEffectProvider: React.FC<TradingEffectProviderProps> = ({ ch
       if (!isCalendarLevelEffect(level)) return;
 
       // 2. 若全局已上锁（正在播放另一个全局动效），静默丢弃，互斥保护
-      if (isGlobalLocked) return;
+      if (isLockedRef.current) return;
 
       // 3. 取消之前的待执行意图
       if (pendingTimerRef.current) {
@@ -63,28 +69,22 @@ export const TradingEffectProvider: React.FC<TradingEffectProviderProps> = ({ ch
         pendingTimerRef.current = null;
         pendingDateRef.current = null;
 
-        // 再次校验锁状态
-        setIsGlobalLocked((currentLocked) => {
-          if (currentLocked) return currentLocked;
+        if (isLockedRef.current) return;
 
-          setActiveGlobalEffect({
-            level,
-            targetDate: date,
-            targetRect: rect,
-          });
-
-          // 设置 3.5s 强制安全超时，防止极端情况下未正常触发 complete 回调导致永久锁死
-          if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
-          safetyTimeoutRef.current = setTimeout(() => {
-            setActiveGlobalEffect(null);
-            setIsGlobalLocked(false);
-          }, 3500);
-
-          return true;
+        isLockedRef.current = true;
+        setIsGlobalLocked(true);
+        setActiveGlobalEffect({
+          level,
+          targetDate: date,
+          targetRect: rect,
         });
-      }, 250);
+
+        // 设置 3.5s 强制安全超时，防止极端情况下未正常触发 complete 回调导致永久锁死
+        if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+        safetyTimeoutRef.current = setTimeout(completeGlobalEffect, GLOBAL_EFFECT_SAFETY_TIMEOUT_MS);
+      }, EFFECT_INTENT_DEBOUNCE_MS);
     },
-    [isGlobalLocked]
+    [completeGlobalEffect]
   );
 
   useEffect(() => {
@@ -94,16 +94,19 @@ export const TradingEffectProvider: React.FC<TradingEffectProviderProps> = ({ ch
     };
   }, []);
 
+  const contextValue = useMemo<TradingEffectContextValue>(
+    () => ({
+      activeGlobalEffect,
+      isGlobalLocked,
+      requestGlobalEffect,
+      cancelPendingIntent,
+      completeGlobalEffect,
+    }),
+    [activeGlobalEffect, isGlobalLocked, requestGlobalEffect, cancelPendingIntent, completeGlobalEffect],
+  );
+
   return (
-    <TradingEffectContext.Provider
-      value={{
-        activeGlobalEffect,
-        isGlobalLocked,
-        requestGlobalEffect,
-        cancelPendingIntent,
-        completeGlobalEffect,
-      }}
-    >
+    <TradingEffectContext.Provider value={contextValue}>
       {children}
     </TradingEffectContext.Provider>
   );

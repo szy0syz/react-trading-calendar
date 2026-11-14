@@ -19,10 +19,14 @@ export {
   formatPnL,
   formatPercent,
   formatCapital,
+  parseDateParts,
+  shiftYearMonth,
   normalizeDateKey,
   formatDayLabel,
+  isCurrentMonthDate,
   hasMonthData,
 } from './utils';
+export type { ParsedDateParts } from './utils';
 export { useTradingCalendar } from './context/TradingCalendarContext';
 export { useTradingEffect } from './components/effects';
 

@@ -3,6 +3,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import { CellEffectLevel } from '../../types';
 import { GlobalEffectPayload } from './types';
 
+const DEFAULT_STAGE_DURATION_MS = 1800;
+
+const STAGE_EFFECT_DURATION_MS: Partial<Record<CellEffectLevel, number>> = {
+  [CellEffectLevel.LOSS_TERRIBLE]: 1600,
+  [CellEffectLevel.LOSS_ABYSMAL]: 2200,
+};
+
+const BLOOD_DROP_OFFSETS = [-18, -6, 6, 18] as const;
+
 export interface CalendarStageEffectsProps {
   effect: GlobalEffectPayload;
   onComplete: () => void;
@@ -16,14 +25,8 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
 
   // 根据亏损级别设置动效持续时间
   useEffect(() => {
-    let duration = 1800;
-    if (level === CellEffectLevel.LOSS_TERRIBLE) duration = 1600;
-    if (level === CellEffectLevel.LOSS_ABYSMAL) duration = 2200;
-
-    const timer = setTimeout(() => {
-      onComplete();
-    }, duration);
-
+    const duration = STAGE_EFFECT_DURATION_MS[level] ?? DEFAULT_STAGE_DURATION_MS;
+    const timer = setTimeout(onComplete, duration);
     return () => clearTimeout(timer);
   }, [level, onComplete]);
 
@@ -109,7 +112,7 @@ export const CalendarStageEffects: React.FC<CalendarStageEffectsProps> = ({
             </svg>
 
             {/* 熔断血滴 🩸 沿碎裂缝隙滴落 */}
-            {[-18, -6, 6, 18].map((offset, idx) => (
+            {BLOOD_DROP_OFFSETS.map((offset, idx) => (
               <motion.span
                 key={idx}
                 initial={{

@@ -207,4 +207,42 @@ describe('<WeeklyCalendarGrid />', () => {
     expect(badges[0]).toHaveAttribute('role', 'img');
     expect(badges[0]).toHaveAttribute('aria-label', '有复盘笔记');
   });
+
+  it('dims non-current-month cells while keeping current-month cells at full opacity', () => {
+    const octoberWithPrevMonthOverlap: DailyRecord[] = [
+      { date: '2026-09-28', pnl: 9944, hasNote: true },
+      { date: '2026-09-29', pnl: 13967 },
+      { date: '2026-09-30', pnl: 7486 },
+      { date: '2026-10-01', pnl: 10645, hasNote: true },
+      { date: '2026-10-02', pnl: 22398 },
+    ];
+
+    const { container } = render(
+      <TradingCalendarProvider {...buildContext()}>
+        <WeeklyCalendarGrid
+          year={2026}
+          month={10}
+          dailyRecords={octoberWithPrevMonthOverlap}
+        />
+      </TradingCalendarProvider>
+    );
+
+    const sep28 = container.querySelector('[data-date="2026-09-28"]');
+    const sep29 = container.querySelector('[data-date="2026-09-29"]');
+    const sep30 = container.querySelector('[data-date="2026-09-30"]');
+    const oct01 = container.querySelector('[data-date="2026-10-01"]');
+    const oct02 = container.querySelector('[data-date="2026-10-02"]');
+
+    [sep28, sep29, sep30].forEach((cell) => {
+      expect(cell).not.toBeNull();
+      expect(cell).toHaveAttribute('data-outside-month', 'true');
+      expect(cell).toHaveClass('opacity-30', 'saturate-50', 'hover:opacity-75', 'hover:saturate-100');
+    });
+
+    [oct01, oct02].forEach((cell) => {
+      expect(cell).not.toBeNull();
+      expect(cell).not.toHaveAttribute('data-outside-month');
+      expect(cell).not.toHaveClass('opacity-30');
+    });
+  });
 });

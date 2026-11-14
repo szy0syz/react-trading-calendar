@@ -1,7 +1,7 @@
 import React from 'react';
 import { TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTradingCalendar } from '../context/TradingCalendarContext';
-import { cn } from '../utils';
+import { cn, shiftYearMonth } from '../utils';
 
 interface TradingCalendarControlsProps {
   year: number;
@@ -9,6 +9,13 @@ interface TradingCalendarControlsProps {
   hasPrevMonth?: boolean;
   hasNextMonth?: boolean;
 }
+
+const NAV_BUTTON_CLASS = cn(
+  "p-0.5 sm:p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors duration-150",
+  "dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800",
+  "focus:outline-none focus-visible:outline-none focus:ring-0",
+  "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
+);
 
 export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = React.memo(({
   year,
@@ -18,14 +25,10 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
 }) => {
   const { sectionTitle, onMonthChange } = useTradingCalendar();
 
-  const handlePrevMonth = () => {
-    if (!onMonthChange || !hasPrevMonth) return;
-    onMonthChange(month === 1 ? year - 1 : year, month === 1 ? 12 : month - 1);
-  };
-
-  const handleNextMonth = () => {
-    if (!onMonthChange || !hasNextMonth) return;
-    onMonthChange(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1);
+  const handleMonthShift = (delta: -1 | 1, enabled: boolean) => {
+    if (!onMonthChange || !enabled) return;
+    const target = shiftYearMonth(year, month, delta);
+    onMonthChange(target.year, target.month);
   };
 
   return (
@@ -40,14 +43,9 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
       <div className="flex items-center border border-slate-200 dark:border-slate-800 rounded-lg px-1.5 sm:px-2 py-0.5 sm:py-1 bg-slate-50 dark:bg-slate-900/60 shadow-inner">
         <button
           type="button"
-          onClick={handlePrevMonth}
+          onClick={() => handleMonthShift(-1, hasPrevMonth)}
           disabled={!hasPrevMonth}
-          className={cn(
-            "p-0.5 sm:p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors duration-150",
-            "dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800",
-            "focus:outline-none focus-visible:outline-none focus:ring-0",
-            "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
-          )}
+          className={NAV_BUTTON_CLASS}
           aria-label="上个月"
         >
           <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -59,14 +57,9 @@ export const TradingCalendarControls: React.FC<TradingCalendarControlsProps> = R
 
         <button
           type="button"
-          onClick={handleNextMonth}
+          onClick={() => handleMonthShift(1, hasNextMonth)}
           disabled={!hasNextMonth}
-          className={cn(
-            "p-0.5 sm:p-1 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors duration-150",
-            "dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800",
-            "focus:outline-none focus-visible:outline-none focus:ring-0",
-            "disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
-          )}
+          className={NAV_BUTTON_CLASS}
           aria-label="下个月"
         >
           <ChevronRight className="w-4 h-4" />

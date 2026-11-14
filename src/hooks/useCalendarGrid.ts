@@ -7,8 +7,8 @@ import { normalizeDateKey } from '../utils';
 export interface ProcessedWeekRow {
   /** ISO 周数 */
   weekNumber: number;
-  /** 周内 5 个交易日数据，null 表示占位（该位置无数据的情况） */
-  days: (DailyRecord | null)[];
+  /** 周内 5 个交易日数据（无数据时自动填充 YYYY-MM-DD / MM/DD 占位对象） */
+  days: DailyRecord[];
   /** 周度盈亏（优先使用 weeklySummaries 中的数据，fallback 到自动累计） */
   weeklyPnL?: number | null;
 }
@@ -60,7 +60,7 @@ export function buildWeekRows(
 
   while (currPointer <= lastDayOfMonth) {
     const currentWeekNum = getISOWeekNumber(currPointer);
-    const daysInWeek: (DailyRecord | null)[] = [];
+    const daysInWeek: DailyRecord[] = [];
 
     let weekAutoPnL = 0;
     let hasWeekData = false;

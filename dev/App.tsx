@@ -12,7 +12,6 @@ function buildMockData(year: number, month: number): {
   dailyRecords: DailyRecord[];
   weeklySummaries: WeeklySummary[];
 } {
-  const daysInMonth = new Date(year, month, 0).getDate();
   const dailyRecords: DailyRecord[] = [];
 
   // 预设 PnL 种子，覆盖 8 级动效的典型涨跌额度（+$8,650 ~ +$115,000，-$11,550 ~ -$120,000）
@@ -38,28 +37,41 @@ function buildMockData(year: number, month: number): {
     true, false, true, false, false,
   ];
 
+  // 生成上月、当月、下月连续工作日数据，便于直观演示跨月首末行单元格淡化效果
+  const targetMonths = [
+    new Date(year, month - 2, 1),
+    new Date(year, month - 1, 1),
+    new Date(year, month, 1),
+  ];
+
   let seedIdx = 0;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month - 1, d);
-    const dow = date.getDay(); // 0=Sun, 6=Sat
+  for (const monthDate of targetMonths) {
+    const targetY = monthDate.getFullYear();
+    const targetM = monthDate.getMonth() + 1;
+    const daysInTargetMonth = new Date(targetY, targetM, 0).getDate();
 
-    // 跳过周末
-    if (dow === 0 || dow === 6) continue;
+    for (let d = 1; d <= daysInTargetMonth; d++) {
+      const date = new Date(targetY, targetM - 1, d);
+      const dow = date.getDay(); // 0=Sun, 6=Sat
 
-    const mm = String(month).padStart(2, '0');
-    const dd = String(d).padStart(2, '0');
+      // 跳过周末
+      if (dow === 0 || dow === 6) continue;
 
-    const pnl = pnlSeed[seedIdx % pnlSeed.length];
-    const tradesCount = tradesCountSeed[seedIdx % tradesCountSeed.length];
-    const hasNote = hasNoteSeed[seedIdx % hasNoteSeed.length];
+      const mm = String(targetM).padStart(2, '0');
+      const dd = String(d).padStart(2, '0');
 
-    dailyRecords.push({
-      date: `${year}-${mm}-${dd}`,
-      pnl,
-      tradesCount,
-      hasNote,
-    });
-    seedIdx++;
+      const pnl = pnlSeed[seedIdx % pnlSeed.length];
+      const tradesCount = tradesCountSeed[seedIdx % tradesCountSeed.length];
+      const hasNote = hasNoteSeed[seedIdx % hasNoteSeed.length];
+
+      dailyRecords.push({
+        date: `${targetY}-${mm}-${dd}`,
+        pnl,
+        tradesCount,
+        hasNote,
+      });
+      seedIdx++;
+    }
   }
 
   // 按 ISO 周号分组，自动累计周度盈亏
@@ -99,6 +111,9 @@ const mockMonthlySummaries: MonthlySummary[] = [
   { month: 6, pnl: 30150 },
   { month: 7, pnl: 49796 },
   { month: 8, pnl: 51147 },
+  { month: 9, pnl: 104546 },
+  { month: 10, pnl: 348463 },
+  { month: 11, pnl: 239617 },
 ];
 
 // ---------------------------------------------------------------------------

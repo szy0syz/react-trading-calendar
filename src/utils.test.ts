@@ -7,6 +7,9 @@ import {
   getPnLBadgeStyle,
   normalizeDateKey,
   formatDayLabel,
+  parseDateParts,
+  shiftYearMonth,
+  isCurrentMonthDate,
   hasMonthData,
 } from './utils';
 
@@ -166,6 +169,55 @@ describe('utils formatting helper functions', () => {
 
     it('should return MM/DD unchanged', () => {
       expect(formatDayLabel('08/01')).toBe('08/01');
+    });
+  });
+
+  describe('parseDateParts', () => {
+    it('should parse YYYY-MM-DD format', () => {
+      expect(parseDateParts('2026-10-05')).toEqual({ year: 2026, month: 10, day: 5 });
+      expect(parseDateParts(' 2026-01-09 ')).toEqual({ year: 2026, month: 1, day: 9 });
+    });
+
+    it('should parse MM/DD format without year', () => {
+      expect(parseDateParts('07/15')).toEqual({ month: 7, day: 15 });
+    });
+
+    it('should return null for empty or invalid date strings', () => {
+      expect(parseDateParts('')).toBeNull();
+      expect(parseDateParts('invalid')).toBeNull();
+      expect(parseDateParts('2026-ab-01')).toBeNull();
+    });
+  });
+
+  describe('shiftYearMonth', () => {
+    it('should handle previous month including January rollover', () => {
+      expect(shiftYearMonth(2026, 7, -1)).toEqual({ year: 2026, month: 6 });
+      expect(shiftYearMonth(2026, 1, -1)).toEqual({ year: 2025, month: 12 });
+    });
+
+    it('should handle next month including December rollover', () => {
+      expect(shiftYearMonth(2026, 7, 1)).toEqual({ year: 2026, month: 8 });
+      expect(shiftYearMonth(2026, 12, 1)).toEqual({ year: 2027, month: 1 });
+    });
+  });
+
+  describe('isCurrentMonthDate', () => {
+    it('should match YYYY-MM-DD against month and optional year', () => {
+      expect(isCurrentMonthDate('2026-10-01', 10, 2026)).toBe(true);
+      expect(isCurrentMonthDate('2026-09-30', 10, 2026)).toBe(false);
+      expect(isCurrentMonthDate('2025-10-01', 10, 2026)).toBe(false);
+      expect(isCurrentMonthDate('2025-10-01', 10)).toBe(true);
+    });
+
+    it('should match MM/DD against target month', () => {
+      expect(isCurrentMonthDate('10/01', 10, 2026)).toBe(true);
+      expect(isCurrentMonthDate('09/30', 10, 2026)).toBe(false);
+      expect(isCurrentMonthDate('11/02', 10, 2026)).toBe(false);
+    });
+
+    it('should handle whitespace and invalid date strings safely', () => {
+      expect(isCurrentMonthDate(' 2026-10-15 ', 10, 2026)).toBe(true);
+      expect(isCurrentMonthDate('invalid-date', 10, 2026)).toBe(false);
     });
   });
 

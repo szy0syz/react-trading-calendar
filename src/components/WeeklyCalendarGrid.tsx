@@ -3,10 +3,12 @@ import { DailyRecord, WeeklySummary, CellEffectLevel, isCalendarLevelEffect } fr
 import { useTradingCalendar } from '../context/TradingCalendarContext';
 import { useTradingEffect, LocalCellEffects } from './effects';
 import { useCalendarGrid } from '../hooks/useCalendarGrid';
-import { cn, formatPnL, formatDayLabel, getPnLBadgeStyle, getPnLTextStyle } from '../utils';
+import { cn, formatPnL, formatDayLabel, getPnLBadgeStyle, getPnLTextStyle, isCurrentMonthDate } from '../utils';
 import type { ColorScheme } from '../types';
 import { CalendarDayTooltip } from './CalendarDayTooltip';
 import { Poptip } from './Poptip';
+
+const WEEKDAY_HEADERS = ['周一', '周二', '周三', '周四', '周五'] as const;
 
 // 仅保留数据相关 props，样式/回调均从 Context 消费
 
@@ -23,10 +25,11 @@ interface CalendarDayCellProps {
   day: DailyRecord;
   colorScheme: ColorScheme;
   isCompact?: boolean;
+  isCurrentMonth?: boolean;
   onDateClick?: (record: DailyRecord) => void;
 }
 
-const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isCompact = true, onDateClick }) => {
+const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isCompact = true, isCurrentMonth = true, onDateClick }) => {
   const isNonTrading = day.isNonTradingDay;
   const isClickable = Boolean(onDateClick) && day.pnl != null;
   const hasTrades = day.tradesCount != null && day.tradesCount > 0;
@@ -79,12 +82,14 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({ day, colorScheme, isC
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-date={day.date}
+      data-outside-month={!isCurrentMonth ? 'true' : undefined}
       data-effect-target={isTarget ? 'true' : undefined}
       className={cn(
-        "tc-calendar-cell relative flex flex-col items-center justify-center space-y-0.5 w-full h-full rounded-md transition-colors duration-150 select-none",
+        "tc-calendar-cell relative flex flex-col items-center justify-center space-y-0.5 w-full h-full rounded-md transition-all duration-150 select-none",
         isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-1.5 sm:rounded-lg",
         isClickable ? "cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50" : "cursor-default",
-        isNonTrading && "bg-diagonal-stripes border border-slate-200/50 dark:border-slate-800/40 opacity-70"
+        isNonTrading && "bg-diagonal-stripes border border-slate-200/50 dark:border-slate-800/40 opacity-70",
+        !isCurrentMonth && "opacity-30 saturate-50 hover:opacity-75 hover:saturate-100"
       )}
     >
       {/* 局部级微动效（纯 Cell 局部自闭环） */}
@@ -167,11 +172,17 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
         <thead>
           <tr className="border-b border-slate-200 dark:border-slate-800/80 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
             <th className={cn("hidden md:table-cell px-1 font-normal w-12 sm:w-20 text-slate-400", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")} />
-            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周一</th>
-            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周二</th>
-            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周三</th>
-            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周四</th>
-            <th className={cn("text-center w-[17.2%] sm:w-[16.4%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>周五</th>
+            {WEEKDAY_HEADERS.map((label) => (
+              <th
+                key={label}
+                className={cn(
+                  "text-center w-[17.2%] sm:w-[16.4%]",
+                  isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2"
+                )}
+              >
+                {label}
+              </th>
+            ))}
             <th className={cn("text-center w-[14%] sm:w-[12%]", isCompact ? "py-1.5 sm:py-2 px-0.5 sm:px-1" : "py-2 sm:py-3 px-0.5 sm:px-2")}>
               <span className="sm:hidden">周汇总</span>
               <span className="hidden sm:inline">周度盈亏</span>
@@ -191,19 +202,16 @@ export const WeeklyCalendarGrid: React.FC<WeeklyCalendarGridProps> = React.memo(
                 第 {row.weekNumber} 周
               </td>
 
-              {row.days.map((day, idx) =>
-                day ? (
-                  <CalendarDayCell
-                    key={day.date + idx}
-                    day={day}
-                    colorScheme={colorScheme}
-                    isCompact={isCompact}
-                    onDateClick={onDateClick}
-                  />
-                ) : (
-                  <td key={idx} className={cn("px-0.5 sm:px-1", isCompact ? "py-1.5 sm:py-2" : "py-2 sm:py-3")} />
-                )
-              )}
+              {row.days.map((day, dayIdx) => (
+                <CalendarDayCell
+                  key={day.date + dayIdx}
+                  day={day}
+                  colorScheme={colorScheme}
+                  isCompact={isCompact}
+                  isCurrentMonth={isCurrentMonthDate(day.date, month, year)}
+                  onDateClick={onDateClick}
+                />
+              ))}
 
               <WeekSummaryBadge weeklyPnL={row.weeklyPnL} colorScheme={colorScheme} isCompact={isCompact} />
             </tr>

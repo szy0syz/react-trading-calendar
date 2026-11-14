@@ -37,52 +37,52 @@ export const AnnualSummaryCard: React.FC<AnnualSummaryCardProps> = React.memo(({
           <>
             <div className="flex items-center space-x-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
               <span>年化收益率</span>
-          {initialCapital != null && (
-            <Poptip
-              content={`初始金额 ${formatCapital(initialCapital)}`}
-              placement="top"
-              widthClass="w-auto whitespace-nowrap"
-            >
+              {initialCapital != null && (
+                <Poptip
+                  content={`初始金额 ${formatCapital(initialCapital)}`}
+                  placement="top"
+                  widthClass="w-auto whitespace-nowrap"
+                >
+                  <span
+                    className="inline-flex items-center cursor-pointer p-0.5"
+                    role="button"
+                    tabIndex={0}
+                    aria-label="年化收益率说明"
+                  >
+                    <Info className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" />
+                  </span>
+                </Poptip>
+              )}
+            </div>
+
+            <div className="mt-1 mb-2">
               <span
-                className="inline-flex items-center cursor-pointer p-0.5"
-                role="button"
-                tabIndex={0}
-                aria-label="年化收益率说明"
+                className={cn(
+                  "text-2xl md:text-3xl font-extrabold font-mono tracking-tight leading-none",
+                  getPnLTextStyle(rate, colorScheme)
+                )}
               >
-                <Info className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" />
+                {formatPercent(rate)}
               </span>
-            </Poptip>
-          )}
-        </div>
+            </div>
 
-        <div className="mt-1 mb-2">
-          <span
-            className={cn(
-              "text-2xl md:text-3xl font-extrabold font-mono tracking-tight leading-none",
-              getPnLTextStyle(rate, colorScheme)
-            )}
-          >
-            {formatPercent(rate)}
-          </span>
-        </div>
-
-        <div className="flex flex-col items-center mt-2 sm:mt-2.5">
-          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0">
-            今年收益
-          </span>
-          <span
-            className={cn(
-              "text-base md:text-lg font-bold font-mono tracking-tight",
-              getPnLTextStyle(totalPnL, colorScheme)
-            )}
-          >
-            {formatPnL(totalPnL)}
-          </span>
-        </div>
-      </>
-    )}
-  </div>
-</div>
+            <div className="flex flex-col items-center mt-2 sm:mt-2.5">
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0">
+                今年收益
+              </span>
+              <span
+                className={cn(
+                  "text-base md:text-lg font-bold font-mono tracking-tight",
+                  getPnLTextStyle(totalPnL, colorScheme)
+                )}
+              >
+                {formatPnL(totalPnL)}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 });
 

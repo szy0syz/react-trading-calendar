@@ -1,6 +1,6 @@
 import React from 'react';
 import { TradingCalendarProps, isCalendarLevelEffect } from './types';
-import { TradingCalendarProvider } from './context/TradingCalendarContext';
+import { TradingCalendarProvider, useTradingCalendar } from './context/TradingCalendarContext';
 import { TradingCalendarHeader } from './components/TradingCalendarHeader';
 import { TradingCalendarControls } from './components/TradingCalendarControls';
 import { WeeklyCalendarGrid } from './components/WeeklyCalendarGrid';
@@ -13,46 +13,39 @@ import {
   LazyCalendarStageEffects,
   scheduleIdlePreload,
 } from './components/effects';
-import { cn, hasMonthData } from './utils';
-
-const currentDate = new Date();
+import { cn, hasMonthData, shiftYearMonth } from './utils';
 
 interface TradingCalendarContentProps
   extends Pick<
     TradingCalendarProps,
-    | 'year'
-    | 'month'
-    | 'dailyRecords'
     | 'weeklySummaries'
-    | 'monthlySummaries'
     | 'annualSummary'
     | 'customAnnualSummary'
-    | 'theme'
-    | 'colorScheme'
     | 'className'
     | 'style'
-    | 'onCellHoverEffect'
   > {
+  year: number;
+  month: number;
+  dailyRecords: NonNullable<TradingCalendarProps['dailyRecords']>;
+  monthlySummaries: NonNullable<TradingCalendarProps['monthlySummaries']>;
   computedHasPrevMonth: boolean;
   computedHasNextMonth: boolean;
 }
 
 const TradingCalendarContent: React.FC<TradingCalendarContentProps> = ({
-  year = currentDate.getFullYear(),
-  month = currentDate.getMonth() + 1,
-  dailyRecords = [],
+  year,
+  month,
+  dailyRecords,
   weeklySummaries,
-  monthlySummaries = [],
+  monthlySummaries,
   annualSummary,
   customAnnualSummary,
-  theme = 'dark',
-  colorScheme = 'greenUpRedDown',
   className,
   style,
   computedHasPrevMonth,
   computedHasNextMonth,
-  onCellHoverEffect,
 }) => {
+  const { theme, colorScheme, onCellHoverEffect } = useTradingCalendar();
   const { activeGlobalEffect, completeGlobalEffect } = useTradingEffect();
 
   // 仅在用户鼠标/指针移入日历容器时才按需触发静默预加载动效引擎 chunk，避免在首屏挂载阶段抢占关键请求链 (Avoid chaining critical requests)
@@ -124,8 +117,8 @@ const TradingCalendarContent: React.FC<TradingCalendarContentProps> = ({
 };
 
 export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
-  year = currentDate.getFullYear(),
-  month = currentDate.getMonth() + 1,
+  year,
+  month,
   dailyRecords = [],
   weeklySummaries,
   monthlySummaries = [],
@@ -152,27 +145,28 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
   className,
   style,
 }) => {
-  const prevYear = month === 1 ? year - 1 : year;
-  const prevMonth = month === 1 ? 12 : month - 1;
-  const nextYear = month === 12 ? year + 1 : year;
-  const nextMonth = month === 12 ? 1 : month + 1;
-
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
 
+  const resolvedYear = year ?? currentYear;
+  const resolvedMonth = month ?? currentMonth;
+
+  const prev = shiftYearMonth(resolvedYear, resolvedMonth, -1);
+  const next = shiftYearMonth(resolvedYear, resolvedMonth, 1);
+
   // 处于当前月（当前月尚未过完）或未来月份时，禁止切换至下月
   const isCurrentOrFuture =
-    year > currentYear || (year === currentYear && month >= currentMonth);
+    resolvedYear > currentYear || (resolvedYear === currentYear && resolvedMonth >= currentMonth);
 
   const computedHasPrevMonth =
     hasPrevMonth ??
-    hasMonthData(prevYear, prevMonth, dailyRecords, monthlySummaries, year);
+    hasMonthData(prev.year, prev.month, dailyRecords, monthlySummaries, resolvedYear);
 
   const computedHasNextMonth =
     !isCurrentOrFuture &&
     (hasNextMonth ??
-      hasMonthData(nextYear, nextMonth, dailyRecords, monthlySummaries, year));
+      hasMonthData(next.year, next.month, dailyRecords, monthlySummaries, resolvedYear));
 
   return (
     <TradingCalendarProvider
@@ -195,18 +189,15 @@ export const TradingCalendar: React.FC<TradingCalendarProps> = React.memo(({
     >
       <TradingEffectProvider>
         <TradingCalendarContent
-          year={year}
-          month={month}
+          year={resolvedYear}
+          month={resolvedMonth}
           dailyRecords={dailyRecords}
           weeklySummaries={weeklySummaries}
           monthlySummaries={monthlySummaries}
           annualSummary={annualSummary}
           customAnnualSummary={customAnnualSummary}
-          colorScheme={colorScheme}
-          theme={theme}
           computedHasPrevMonth={computedHasPrevMonth}
           computedHasNextMonth={computedHasNextMonth}
-          onCellHoverEffect={onCellHoverEffect}
           className={className}
           style={style}
         />
